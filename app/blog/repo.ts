@@ -8,38 +8,22 @@ const blogPostFrontmatterSchema = z.object({
   date: z.string().date(),
 });
 
-type BlogPostFrontmatter = z.infer<typeof blogPostFrontmatterSchema>;
-
-type BlogPostMeta = BlogPostFrontmatter & {
+type BlogPostMeta = z.infer<typeof blogPostFrontmatterSchema> & {
   slug: string;
 };
 
-export function getPath(slug: string) {
-  return `@/blog/${slug}.mdx`;
-}
-
-export async function listPosts(): Promise<BlogPostMeta[]> {
+export async function listSlugs(): Promise<string[]> {
   const files = await fs.readdir('./blog');
-  return Promise.all(
-    files.map(async (file) => {
-      const slug = file.replace('.mdx', '');
-      const path = getPath(slug);
-      const { frontmatter } = await import(path);
-      const parsedFrontmatter = blogPostFrontmatterSchema.parse(frontmatter);
-      return { slug, ...parsedFrontmatter };
-    }),
-  );
+  return files.map((file) => file.replace('.mdx', ''));
 }
 
-export async function getComponent(slug: string): Promise<React.ComponentType> {
-  const path = getPath(slug);
-  const { default: Component } = await import(path);
-  return Component;
-}
-
-export async function getPost(slug: string): Promise<BlogPostMeta> {
-  const path = getPath(slug);
-  const { frontmatter } = await import(path);
+export async function getMeta(slug: string): Promise<BlogPostMeta> {
+  const { frontmatter } = await import(`@/blog/${slug}.mdx`);
   const parsedFrontmatter = blogPostFrontmatterSchema.parse(frontmatter);
   return { slug, ...parsedFrontmatter };
+}
+
+export async function listMetas(): Promise<BlogPostMeta[]> {
+  const files = await fs.readdir('./blog');
+  return Promise.all(files.map(async (file) => getMeta(file.replace('.mdx', ''))));
 }

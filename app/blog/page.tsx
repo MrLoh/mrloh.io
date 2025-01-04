@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
-import { listPosts } from './repo';
+import { listMetas } from './repo';
 
 export default async function BlogHomePage() {
-  const blogPosts = await listPosts();
+  const blogPosts = await listMetas();
 
   return (
     <div>
