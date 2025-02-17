@@ -1,11 +1,16 @@
 import 'server-only';
 
 import fs from 'fs/promises';
+import { Temporal } from '@js-temporal/polyfill';
 import { z } from 'zod';
 
 const blogPostFrontmatterSchema = z.object({
   title: z.string(),
-  date: z.string().date(),
+  date: z
+    .string()
+    .date()
+    .transform((date) => Temporal.PlainDate.from(date)),
+  description: z.string(),
 });
 
 type BlogPostMeta = z.infer<typeof blogPostFrontmatterSchema> & {
