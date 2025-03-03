@@ -18,7 +18,7 @@ function MobileNavigation({ links }: { links: { href: string; name: string }[] }
           'text-sm font-medium text-zinc-800 dark:text-zinc-200',
           'group flex items-center rounded-full bg-white/90 px-4 py-2 backdrop-blur dark:bg-zinc-800/90',
           'ring-1 shadow-lg shadow-zinc-800/5 ring-zinc-900/5 dark:ring-white/10',
-          'transition hover:ring-zinc-900/10 dark:hover:ring-white/20',
+          'outline-teal-500 transition hover:ring-zinc-900/10 dark:hover:ring-white/20',
         )}
       >
         Menu
@@ -34,7 +34,7 @@ function MobileNavigation({ links }: { links: { href: string; name: string }[] }
         className="fixed inset-x-4 top-8 z-50 origin-top rounded-3xl bg-white p-8 ring-1 ring-zinc-900/5 duration-150 data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:ease-out data-[leave]:ease-in dark:bg-zinc-900 dark:ring-zinc-800"
       >
         <div className="flex flex-row-reverse items-center justify-between">
-          <PopoverButton aria-label="Close menu" className="-m-1 p-1">
+          <PopoverButton aria-label="Close menu" className="-m-1 p-1 outline-teal-500">
             <X aria-hidden="true" className="h-6 w-6 text-zinc-500 dark:text-zinc-400" />
           </PopoverButton>
           <h2 className="text-sm font-medium text-zinc-600 dark:text-zinc-400">Navigation</h2>
@@ -43,7 +43,7 @@ function MobileNavigation({ links }: { links: { href: string; name: string }[] }
           <ul className="-my-2 divide-y divide-zinc-100 text-base text-zinc-800 lowercase italic dark:divide-zinc-100/5 dark:text-zinc-300">
             {links.map(({ href, name }) => (
               <li key={href}>
-                <PopoverButton as={Link} href={href} className="block py-2">
+                <PopoverButton as={Link} href={href} className="block px-1 py-2 outline-teal-500">
                   {name}
                 </PopoverButton>
               </li>
@@ -71,7 +71,7 @@ function DesktopNavigation({ links }: { links: { href: string; name: string }[] 
             <Link
               href={href}
               className={twJoin(
-                'relative block px-3 py-2 transition',
+                'relative block px-3 py-2 outline-teal-500 transition',
                 path.startsWith(href)
                   ? 'text-teal-500 dark:text-teal-400'
                   : 'hover:font-bold hover:text-teal-700 dark:hover:text-teal-100',
@@ -102,6 +102,7 @@ function ThemeToggle() {
         'group flex h-9 w-12 justify-center rounded-full bg-white/90 px-3 py-2 backdrop-blur dark:bg-zinc-800/90',
         'ring-1 shadow-lg shadow-zinc-800/5 ring-zinc-900/5 dark:ring-white/10',
         'transition hover:ring-zinc-900/10 dark:hover:ring-white/20',
+        'outline-teal-500',
       )}
       onClick={() => setTheme(otherTheme)}
     >

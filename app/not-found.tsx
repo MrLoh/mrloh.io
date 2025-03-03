@@ -11,7 +11,7 @@ export default function NotFound() {
       <h1
         className={twJoin(
           'text-8xl text-transparent',
-          'bg-gradient-to-b from-teal-400 via-teal-500 to-teal-900 bg-clip-text',
+          'bg-gradient-to-b from-teal-400 via-teal-500 to-teal-600 bg-clip-text dark:to-teal-900',
         )}
       >
         404

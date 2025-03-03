@@ -1,3 +1,5 @@
+import { twJoin } from 'tailwind-merge';
+
 import { getMeta, listSlugs } from '../repo';
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
@@ -5,15 +7,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { title, date } = await getMeta(slug);
   const { default: Post } = await import(`@/blog/${slug}.mdx`);
   return (
-    <main className="flex flex-col items-center justify-center">
-      <article className="prose dark:prose-invert mx-8 my-8 w-full max-w-120">
-        <time className="order-first mb-1 text-sm text-zinc-500">
-          {date.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </time>
-        <h1>{title}</h1>
-        <Post />
-      </article>
-    </main>
+    <article className={twJoin('prose font-prose dark:prose-invert mx-8 w-full max-w-160')}>
+      <time className="font-sans text-sm font-bold text-zinc-500 uppercase">
+        {date.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+      <h1 className="mt-2 mb-8 font-sans text-3xl text-zinc-700 italic dark:text-zinc-300">
+        {title}
+      </h1>
+      <Post />
+    </article>
   );
 }
 

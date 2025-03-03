@@ -26,6 +26,7 @@ export function Footer({ links }: { links: { href: string; name: string }[] }) {
                 className={twJoin(
                   'text-zinc-600 lowercase italic dark:text-zinc-400',
                   'transition hover:text-teal-500 dark:hover:text-teal-400',
+                  'outline-teal-500 focus:text-teal-500 dark:focus:text-teal-400',
                 )}
               >
                 {link.name}
@@ -41,9 +42,14 @@ export function Footer({ links }: { links: { href: string; name: string }[] }) {
                 { Icon: Rss, href: '/blog/feed.xml' },
                 { Icon: Email, href: 'mailto:hi@mrloh.io' },
               ].map(({ Icon, href }) => (
-                <Link href={href} key={href}>
-                  <Icon className="size-4 text-zinc-500 hover:text-teal-500" />
-                </Link>
+                <a
+                  href={href}
+                  key={href}
+                  className="group outline-teal-500"
+                  target={!href.startsWith('mailto') ? '_blank' : undefined}
+                >
+                  <Icon className="size-4 text-zinc-500 transition-all group-hover:text-teal-500 group-focus:text-teal-500" />
+                </a>
               ))}
             </div>
             <p className="mt-1 -mb-6 text-xs text-zinc-400 dark:text-zinc-600">
