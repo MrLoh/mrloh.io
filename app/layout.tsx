@@ -36,18 +36,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="relative flex min-h-screen w-full flex-col">
             <Header
               links={[
-                { href: '/about', name: 'About' },
                 { href: '/blog', name: 'Blog' },
-                { href: '/projects', name: 'Projects' },
+                { href: '/about', name: 'About' },
+                // { href: '/projects', name: 'Projects' },
               ]}
             />
             <main className="flex flex-auto flex-col">{children}</main>
             <Footer
               links={[
-                { href: '/', name: 'Home' },
+                // { href: '/', name: 'Home' },
                 { href: '/blog', name: 'Blog' },
                 { href: '/about', name: 'About' },
-                { href: '/projects', name: 'Projects' },
+                // { href: '/projects', name: 'Projects' },
                 { href: '/colophon', name: 'Colophon' },
               ]}
             />

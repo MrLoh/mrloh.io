@@ -5,7 +5,7 @@ import { Bluesky, Email, Github, LinkedIn, Rss } from './SocialIcons';
 
 export function Footer({ links }: { links: { href: string; name: string }[] }) {
   return (
-    <footer className="mx-auto mt-32 w-full max-w-7xl flex-none sm:px-8 lg:px-8">
+    <footer className="mx-auto mt-12 w-full max-w-7xl flex-none sm:px-8 lg:px-8">
       <div className="border-t border-zinc-100 pt-10 pb-16 dark:border-zinc-700/40">
         <div
           className={twJoin(
@@ -38,7 +38,7 @@ export function Footer({ links }: { links: { href: string; name: string }[] }) {
               {[
                 { Icon: Bluesky, href: 'https://bsky.app/profile/mrloh.io' },
                 { Icon: Github, href: 'https://github.com/mrloh' },
-                { Icon: LinkedIn, href: 'http://linkedin.com/in/tobiaslohse/details/experience/' },
+                { Icon: LinkedIn, href: 'http://linkedin.com/in/tobiaslohse' },
                 { Icon: Rss, href: '/blog/feed.xml' },
                 { Icon: Email, href: 'mailto:hi@mrloh.io' },
               ].map(({ Icon, href }) => (
