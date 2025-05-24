@@ -11,4 +11,6 @@
 
 * {
   font-feature-settings: 'ss05';
+  font-kerning: normal;
+  letter-spacing: -0.005em;
 }
