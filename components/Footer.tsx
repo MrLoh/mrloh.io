@@ -10,7 +10,7 @@ export function Footer({ links }: { links: { href: string; name: string }[] }) {
         <div
           className={twJoin(
             'relative mx-auto items-center justify-between',
-            'flex max-w-2xl flex-col gap-6 px-4 sm:flex-row sm:px-8 lg:max-w-5xl lg:px-12',
+            'flex max-w-2xl flex-col gap-6 px-4 sm:flex-row sm:px-6',
           )}
         >
           <div
@@ -33,7 +33,7 @@ export function Footer({ links }: { links: { href: string; name: string }[] }) {
               </Link>
             ))}
           </div>
-          <div>
+          <div className="flex flex-col items-center">
             <div className="mx-1 flex gap-3">
               {[
                 { Icon: Bluesky, href: 'https://bsky.app/profile/mrloh.io' },

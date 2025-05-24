@@ -263,30 +263,23 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
     <>
       <header
         className="pointer-events-none relative z-50 flex flex-none flex-col"
-        style={{
-          height: 'var(--header-height)',
-          marginBottom: 'var(--header-mb)',
-        }}
+        style={{ height: 'var(--header-height)', marginBottom: 'var(--header-mb)' }}
       >
         <div
           ref={headerRef}
           className="top-0 z-10 h-16 pt-6"
-          style={{
-            position: 'var(--header-position)' as React.CSSProperties['position'],
-          }}
+          style={{ position: 'var(--header-position)' as React.CSSProperties['position'] }}
         >
           <div
             className={twJoin(
               'top-[var(--header-top,theme(spacing.6))] w-full',
-              'mx-auto w-full max-w-7xl sm:px-8 lg:px-8',
+              'mx-auto w-full max-w-7xl sm:px-6 lg:px-8',
             )}
-            style={{
-              position: 'var(--header-inner-position)' as React.CSSProperties['position'],
-            }}
+            style={{ position: 'var(--header-inner-position)' as React.CSSProperties['position'] }}
           >
             <div
               className={twJoin(
-                'px-4 sm:px-8 lg:px-12',
+                'px-4 sm:px-6 lg:px-12',
                 'mx-auto max-w-2xl lg:max-w-5xl',
                 'relative flex gap-4',
               )}

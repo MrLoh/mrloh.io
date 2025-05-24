@@ -37,7 +37,7 @@ function Post({
       </h2>
       <time
         className={twJoin(
-          'order-first mb-1 font-sans text-xs font-bold text-zinc-500 uppercase transition-all dark:text-zinc-400',
+          'order-first mb-1 text-xs font-bold text-zinc-500 uppercase transition-all dark:text-zinc-400',
           'group-hover:text-teal-800 group-focus:text-teal-800',
           'dark:group-hover:text-teal-200 dark:group-focus:text-teal-200',
         )}
@@ -46,7 +46,7 @@ function Post({
       </time>
       <p
         className={twJoin(
-          'line-clamp-3 text-sm text-ellipsis text-zinc-700 transition-all dark:text-zinc-300',
+          'text-sm text-zinc-700 transition-all dark:text-zinc-300',
           'group-hover:text-teal-900 group-focus:text-teal-900',
           'dark:group-hover:text-teal-50 dark:group-focus:text-teal-50',
         )}
@@ -60,7 +60,7 @@ function Post({
 export default async function BlogHomePage() {
   const blogPosts = await listMetas();
   return (
-    <div className="flex max-w-160 flex-col">
+    <div className="flex max-w-2xl flex-col">
       <p className="mx-4 mt-4 mb-6 border-b border-zinc-300 pb-6 text-center text-sm text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
         thoughts on software engineering, product design, startups, business, and life
       </p>

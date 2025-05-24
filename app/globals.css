@@ -9,8 +9,19 @@
   --font-sans: 'cartograph-cf', sans-serif;
 }
 
-* {
-  font-feature-settings: 'ss05';
-  font-kerning: normal;
-  letter-spacing: -0.005em;
+@layer base {
+  * {
+    font-feature-settings: 'ss05';
+    font-kerning: normal;
+    letter-spacing: -0.005em;
+  }
+}
+
+@layer components {
+  .prose h1 {
+    @apply !mt-2 !mb-8 !text-3xl !text-zinc-700 italic dark:!text-zinc-300;
+  }
+  .prose h2 {
+    @apply !text-base !font-extrabold !text-zinc-800 uppercase dark:!text-zinc-200;
+  }
 }

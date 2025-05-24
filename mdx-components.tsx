@@ -19,7 +19,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         <a
           {...props}
           className={twJoin(
-            'group text-inherit no-underline',
+            'group font-inherit font-normal text-inherit no-underline',
             'hover:text-teal-500 focus:text-teal-500',
             'rounded-md outline-none focus:bg-teal-50 dark:focus:bg-teal-900/30',
           )}
@@ -27,8 +27,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         >
           {props.children}
           <SquareArrowOutUpRight
+            viewBox="-2 -2 28 28"
             className={twJoin(
-              'mb-[1.5px] ml-0.5 inline-block size-3 stroke-[2.5px]',
+              'mb-[1.5px] ml-0.5 inline-block size-3 stroke-[3px]',
               'group-hover:text-teal-500 group-focus:text-teal-500',
               'rounded-md outline-none focus:bg-teal-50 dark:focus:bg-teal-900/20',
             )}
@@ -37,21 +38,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       ) : (
         <Link {...props} className="text-teal-500" />
       ),
-    h2: (props) => (
-      <h2
-        {...props}
-        className={twJoin(
-          'font-sans text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200',
-          props.className,
-        )}
-      >
-        {props.children}
-      </h2>
-    ),
     ...components,
   };
 }
-
-// document.querySelectorAll("p").forEach(p => {
-//   p.innerHTML = p.innerHTML.replace(/([,"'])/g, '<span class="special-char">$1</span>');
-// });
