@@ -1,18 +1,12 @@
 import { Download, Send } from 'lucide-react';
-import { twJoin } from 'tailwind-merge';
 
-const buttonClassName = twJoin(
-  'flex grow basis-60 items-center justify-center gap-2 rounded-md px-4 py-2 transition',
-  'text-sm text-zinc-800 italic no-underline dark:text-zinc-200',
-  'bg-zinc-100 dark:bg-zinc-800',
-  'hover:bg-teal-500 hover:text-white hover:shadow-lg hover:shadow-teal-400/20 dark:hover:bg-teal-600',
-);
+import { Button } from '@/components/Button';
 
 export default async function AboutPage() {
   const { default: Content } = await import('./about.mdx');
   return (
     <div className="mt-12 flex flex-1 flex-col items-center">
-      <article className="prose dark:prose-invert relative max-w-2xl px-6">
+      <article className="prose prose-zinc dark:prose-invert relative max-w-2xl px-6">
         <h1 className="flex justify-between">
           <div>About Me</div>
           <svg className="mt-1 size-8 fill-teal-500" viewBox="0 0 512 512" version="1.1">
@@ -21,14 +15,14 @@ export default async function AboutPage() {
         </h1>
         <Content />
         <div className="mt-10 flex items-center gap-12">
-          <a href="/resume.pdf" className={buttonClassName}>
+          <Button href="/resume.pdf">
             download resume
             <Download className="size-4" />
-          </a>
-          <a href="mailto:hi@mrloh.io" className={buttonClassName}>
+          </Button>
+          <Button href="mailto:hi@mrloh.io">
             get in touch
             <Send className="size-4" />
-          </a>
+          </Button>
         </div>
       </article>
     </div>

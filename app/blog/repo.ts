@@ -11,11 +11,10 @@ const blogPostFrontmatterSchema = z.object({
     .date()
     .transform((date) => Temporal.PlainDate.from(date)),
   description: z.string(),
+  blueskyId: z.string().optional(),
 });
 
-type BlogPostMeta = z.infer<typeof blogPostFrontmatterSchema> & {
-  slug: string;
-};
+type BlogPostMeta = z.infer<typeof blogPostFrontmatterSchema> & { slug: string };
 
 export async function listSlugs(): Promise<string[]> {
   const files = await fs.readdir('./blog');

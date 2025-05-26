@@ -5,7 +5,7 @@ import { Bluesky, Email, Github, LinkedIn, Rss } from './SocialIcons';
 
 export function Footer({ links }: { links: { href: string; name: string }[] }) {
   return (
-    <footer className="mx-auto mt-12 w-full max-w-7xl flex-none sm:px-8 lg:px-8">
+    <footer className="mx-auto mt-12 w-full max-w-7xl flex-none sm:px-8">
       <div className="border-t border-zinc-100 pt-10 pb-16 dark:border-zinc-700/40">
         <div
           className={twJoin(
