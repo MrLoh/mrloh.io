@@ -181,8 +181,17 @@ export default function Comments({ blueskyId }: { blueskyId?: string }) {
 
   useEffect(() => {
     (async () => {
-      if (!blueskyId) return;
-      setThread(await getThread(blueskyId));
+      let rid = blueskyId;
+      if (!rid) {
+        try {
+          const res = await fetch(`${window.location.href}/bluesky?return`);
+          rid = await res.text();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      if (!rid) return;
+      setThread(await getThread(rid));
     })();
   }, [blueskyId]);
 
