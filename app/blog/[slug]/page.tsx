@@ -2,6 +2,26 @@ import { twJoin } from 'tailwind-merge';
 
 import { getMeta, listSlugs } from '../repo';
 import Comments from './Comments';
+import { DOMAIN } from '@/config'
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const { title, description, date } = await getMeta(slug);
+  return {
+    title,
+    description,
+    alternates: { canonical: `https://${DOMAIN}/blog/${slug}` },
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      url: `https://${DOMAIN}/blog/${slug}`,
+      siteName: "Tobias Lohse’s Blog",
+      publishedTime: `${date.toString()}T12:00:00.000Z`,
+      authors: [`https://${DOMAIN}/about`],
+    },
+  };
+}
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
