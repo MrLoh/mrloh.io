@@ -1,0 +1,154 @@
+---
+title: 'Your Errors Deserve a Domain Model'
+date: '2026-04-29'
+description: 'Why application errors need shared types, boundary remapping, and observability so product meaning survives from backend to UI.'
+---
+
+Errors are often treated as an afterthought. We put a lot of care into domain models, API boundaries, frontend state, and user flows — and then an error happens, and all of that structure disappears. The backend throws a generic exception, the API maps it to whichever HTTP status code feels close enough, the frontend guesses, and the user sees some version of “something went wrong.”
+
+At my last startup I had the unusual chance to work across UX design, frontend architecture, backend architecture, and observability in a greenfield system. That’s what made it impossible for me to keep treating error handling as an afterthought. Every vague backend exception became a confusing UI state. Every inconsistent API response became duplicated frontend logic. Every swallowed stack trace made production issues harder to debug.
+
+The idea we landed on was simple: errors deserve a domain model. Not just a status code, not just an exception class, but a shared model that crosses every boundary in the system. It defines what an error means, what the user should see, what the frontend should do, what the backend should guarantee, and what observability should track.
+
+Agentic coding has only made this more urgent. Coding agents reflect the average patterns in the code they’ve seen, so without a clear project strategy they’ll mix thrown exceptions, ad hoc response bodies, string matching, swallowed stack traces, and generic error messages. If your application doesn’t have an error model, agentic coding will invent one accidentally, one handler at a time.
+
+## Meaning Gets Lost at Handoffs
+
+Most bad error handling happens when meaning changes hands. Domain logic hands an exception to the API layer. The API layer hands a status code and message to the frontend. The frontend hands a generic error state to the user. Observability records a technical failure, but the product meaning is lost.
+
+Imagine a user trying to invite a teammate. They enter an invalid email, the backend rejects it, and if the response maps cleanly to the email field, the frontend can show an inline message under that field. Now make it harder: the backend returns a validation error for a field the form doesn’t know about — maybe stale frontend state, maybe a schema mismatch. Or the email is valid but belongs to a deactivated user. Is that invalid input? Unauthorized? An invariant violation? A bug?
+
+Without a shared model, those distinctions disappear. The backend returns a `400` with a message string, the frontend guesses, and the user gets a generic failure. The HTTP status code says the request was bad, but not what the product should have done.
+
+This is why HTTP status codes alone aren’t an error strategy. Arguing whether a duplicate name should be `400`, `409`, or `422` often misses the more important product question: should this become a field error, an action-level dialog, an access denial, or a bug? Status codes are useful transport metadata. They aren’t a model.
+
+## Errors Are Relative to the Caller
+
+A backend API doesn’t usually know whether invalid input is a user mistake. It only knows that its caller sent input it can’t accept. That caller might be a form, but it might also be frontend state, hidden metadata, a stale page, or another backend service.
+
+Each layer needs to preserve the meaning of an error and remap it into the model of its own caller. It helps to translate errors deliberately instead of passing them through mechanically.
+
+A small shared vocabulary makes that translation easier. I split errors into three kinds — rejections, outages, and bugs — and the rest of this post walks through each.
+
+In our codebase, that vocabulary collapsed to a single discriminated union shared by server and client:
+
+```ts
+type DomainError =
+  | { type: 'UNAUTHENTICATED' }
+  | { type: 'UNAUTHORIZED'; reason: string }
+  | { type: 'NOT_FOUND'; resource: string }
+  | { type: 'INVALID_INPUT'; errors: {[field: string]: string} }
+  | { type: 'INVARIANT_VIOLATION'; invariant: string }
+  | { type: 'UNAVAILABLE'; service: string }
+  | { type: 'BUG'; origin: string; digest: string };
+```
+
+Each variant has a small constructor and is pattern-matched exhaustively at every boundary.
+
+## Rejections
+
+A rejection is expected product behavior: the system is saying no for a reason, and that reason should be explicit. Rejections should have stable types and structured payloads so each caller can translate them into its own model.
+
+### Invalid Input
+
+Invalid input means the caller supplied values the callee can’t accept. That doesn’t always mean the user made a mistake. It means the request is invalid from the callee’s perspective.
+
+At an API boundary, the caller is often the frontend. If the backend returns an invalid input error for `email`, and the current form has an email field the user controls, the frontend can remap it into an inline field error. If the backend returns an invalid input error for a field the form doesn’t know about, the frontend shouldn’t silently ignore it. That’s probably a contract bug, stale frontend state, or a mismatch between the UI and the API schema.
+
+### Not Found
+
+Not found means the requested resource doesn’t exist in the caller’s accessible world. In multi-tenant systems, a resource owned by another organization should often look the same as a resource that doesn’t exist. Returning unauthorized can leak information.
+
+Not found is common when rendering pages from shared links. A project was deleted. An invitation expired. A dashboard references a resource that no longer exists. At the UI boundary, not found usually maps to a page-level or component-level empty state. The user needs to know what’s missing, not internal details about why the lookup failed.
+
+During actions, not found is more suspicious. If the resource disappeared after the page loaded, it might become an action-level dialog. If the frontend sent an ID that shouldn’t have been possible, it might become a bug.
+
+### Unauthenticated
+
+Unauthenticated means the caller doesn’t have a valid identity. In a user-facing application, this usually means the session expired.
+
+During page rendering, the right UX is usually a redirect to login with enough callback state to bring the user back afterward. During an action, the user may have filled out a form, clicked submit, and only then discovered that their session expired. The fallback is usually a dialog that asks them to log in again.
+
+### Unauthorized
+
+Unauthorized means the caller is authenticated, but doesn’t have permission to perform the operation. This is about the actor. The user, role, token, organization, or policy doesn’t grant the capability.
+
+At the UI boundary, unauthorized errors should often be predicted before the user acts. If the user can’t invite teammates, the invite button should be hidden, disabled, or shown with an explanation. If the user can’t view a page, the page should render an access-denied state. If unauthorized happens during an action, the fallback should explain that the user doesn’t have permission. It shouldn’t pretend the input was wrong.
+
+### Invariant Violation
+
+Invariant violation means the caller may be allowed to perform the operation, and the input may be valid, but the current system state still says no. This is the rejection that tends to get muddled with invalid input or unauthorized.
+
+A user without permission to delete projects gets an unauthorized error. A user with permission to delete projects who tries to delete a project that still has active deployments gets an invariant violation. A malformed email address is invalid input. A valid email address belonging to a deactivated user may be an invariant violation.
+
+The actor-vs-state distinction matters because the UX is different. Invalid input belongs to a field. Unauthorized belongs to the permission model. Invariant violation belongs to the action. At the UI boundary, invariant violations should usually become dialogs that explain what condition prevented the action and, when possible, what can happen next.
+
+### Domain-Specific Rejections
+
+Most products need a few additional rejection types. Quota exceeded is a common example. The request may be valid and the caller may be allowed to perform the operation in principle, but the current plan or usage limit prevents it. That deserves its own type if the product needs dedicated upgrade, billing, or usage-limit UX.
+
+Add a subtype when the product needs distinct behavior. Don’t add one just because there’s another HTTP status code available.
+
+## Outages
+
+An outage means the request may be valid, but the system can’t complete it right now. This includes dependency outages, network failures, gateway errors, timeouts, overloaded services, unavailable workers, and offline clients.
+
+Outages aren’t product decisions; they’re operational signals.
+
+From the user’s perspective, many outages look the same: the system can’t do the thing right now. The UX should usually allow retrying or tell the user to come back later. The client can retry automatically when the action is safe to repeat. If the problem persists, show a page or dialog that names the unavailable service at a useful level of abstraction.
+
+Don’t expose internal topology. “Search is temporarily unavailable” is usually better than naming the exact database, queue, or pod that failed. Offline can be a frontend-only subtype. If the client already knows the network is unavailable, the UI can say so directly instead of pretending the server rejected the request.
+
+## Bugs
+
+A bug means a developer assumption broke. The system reached a state the code wasn’t designed to handle. A response had an impossible shape. A supposedly unreachable branch was reached. A required value was missing. A frontend/backend contract drifted. A domain invariant that should have been enforced earlier was violated.
+
+Bugs should fail loudly. That doesn’t mean showing stack traces to users. The user-facing message should be generic, but the internal record should preserve the stack trace, distributed trace context, and enough state to understand what failed.
+
+The worst outcome is a catch block that swallows the exception, loses the stack trace, and lets the system continue with corrupted assumptions. Swallowing bugs doesn’t protect users. It hides the broken assumption from the people who can fix it.
+
+## Make the Model Hard to Bypass
+
+The taxonomy is only useful if developers don’t have to remember it every time they handle an error. The goal is to make the right thing the easy thing.
+
+### Return Rejections, Throw Bugs
+
+Expected rejections should be typed return values. Invalid input, not found, unauthenticated, unauthorized, invariant violation, and domain-specific rejections like quota exceeded are part of the product contract, not bugs. A service that can reject a request for domain reasons should say so in its return type.
+
+This is especially useful for authorization. Policy helpers should return typed unauthorized results with clear reasons, not random booleans or thrown strings. That lets application code distinguish “the actor can’t do this” from “the operation violates the current domain state.”
+
+Throwing still has a place. It’s appropriate for broken assumptions and impossible states. The mistake is catching those errors too early or translating them into vague product failures. Catch unexpected errors at a clear outer boundary, preserve the diagnostic context, and turn them into bug results there. The exact abstraction matters less than having a known place where unexpected failures become observable bugs.
+
+The same rule lives as a single line in our agents file: never throw from business logic, return `Result<T, E>`. Coding agents follow that one line better than any prose explanation of the taxonomy.
+
+Concretely, a single `catchBug` wrapper turns thrown errors into `Bug` results. The full stack and cause stay server-side in logs; the result that travels to the client carries only an origin tag and a short digest. The UI renders a generic message, the digest, and a “copy and email support” button — actionable for the user, opaque about internals.
+
+### Remap Errors at Every Boundary
+
+The most important implementation pattern is boundary remapping. An API client shouldn’t blindly pass through every error response it receives. It should translate remote errors into the local error model of its caller.
+
+A `422` from a backend only becomes invalid input when the client supplies a mapping from remote field paths to local form fields. Without that mapping, the `422` becomes a bug, not a silent passthrough. A `401` or `403` from a service-to-service call using a central API key is also a bug rather than unauthorized — the user could never have caused it. Network errors and gateway codes like `502` or `504` normalize to unavailable.
+
+This is the practical meaning of “errors are relative to the caller.”
+
+### Translate at the UI Boundary
+
+Forms should know how to handle invalid input results. If the submission returns field errors, the form maps them to fields and renders inline messages. Anything else belongs to a page or dialog-level error helper.
+
+That split keeps form code boring. Forms render field errors. Everything else belongs to a different UI boundary.
+
+The types make this split hard to violate. The `Form` component’s post-submit branch is three lines: success, invalid input (mapped to fields), or anything else (handed to `showErrorDialog`). The page-level error type is the rejection union with invalid input excluded, so a page renderer can’t consume a field error and a form can’t render one as a dialog.
+
+Once the frontend has a typed page-level or action-level error, rendering should be centralized. Unauthenticated can become login UX. Unauthorized can explain the missing permission. Not found can explain which resource is missing. Unavailable can offer retry. Invariant violation can become an action-level dialog. Bugs can show a digest and a support path. This keeps individual features from inventing their own error UX.
+
+### Wire Errors into Observability
+
+The error model should connect to observability by design. Each error result carries a type, so logs and traces can be tagged with it instead of relying on string matching after the fact. That tagging is what makes the rest possible.
+
+Rejections are expected behavior, but spikes can reveal confusing UX, broken clients, abuse, permissions regressions, or workflow edge cases. A surge in invalid input on one form usually points at a UI bug. A surge in unauthorized usually points at a permissions regression or a missing prediction in the UI. Outages should track unavailable dependencies, timeouts, retries, and worker heartbeats, with alerts scoped to the dependency rather than the calling service. Bugs should preserve stack traces, trace IDs or digests, request context, and domain context — and they should always alert, since they’re the unexpected category.
+
+## The Payoff
+
+A good error model is a product contract that spans domain logic, API responses, frontend helpers, form abstractions, UI states, and observability. It prevents meaning from getting lost at handoffs, makes expected failures easy to handle, and makes unexpected failures hard to miss.
+
+It also gives humans and coding agents a clear path: there’s a named type to return, a helper to call, a boundary that remaps it, and a UI component that knows how to render it. Without that structure, every new error handler becomes a small opportunity to invent a worse system.

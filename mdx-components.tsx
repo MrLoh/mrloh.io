@@ -4,6 +4,8 @@ import Image, { ImageProps } from 'next/image';
 import Link from 'next/link';
 import { twJoin } from 'tailwind-merge';
 
+import { CodeBlock } from '@/components/CodeBlock';
+
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     img: (props) => (
@@ -38,6 +40,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       ) : (
         <Link {...props} className="text-teal-500" />
       ),
+    pre: (props) => <CodeBlock>{props.children as React.ReactElement<{ className?: string; children?: string }>}</CodeBlock>,
     ...components,
   };
 }

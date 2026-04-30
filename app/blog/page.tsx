@@ -67,9 +67,6 @@ export default async function BlogHomePage() {
       {blogPosts.map((post) => (
         <Post key={post.slug} {...post} />
       ))}
-      <p className="mx-4 mt-4 border-t border-zinc-300 pt-6 text-center text-sm text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
-        more posts coming soon
-      </p>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { Temporal } from '@js-temporal/polyfill';
 import { Feed } from 'feed';
 import { NextResponse } from 'next/server';
 import rehypeStringify from 'rehype-stringify';
@@ -41,7 +40,6 @@ export async function GET() {
   });
 
   const posts = await listMetas();
-  posts.sort((a, b) => Temporal.PlainDate.compare(b.date, a.date));
   await Promise.all(
     posts.map(async (post) => {
       feed.addItem({

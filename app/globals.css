@@ -24,4 +24,23 @@
   .prose h2 {
     @apply !text-base !font-extrabold !text-zinc-800 uppercase dark:!text-zinc-200;
   }
+  .prose h3 {
+    @apply !text-base !font-bold !text-zinc-700 dark:!text-zinc-300;
+  }
+  .prose :not(pre) > code {
+    @apply rounded border border-teal-700/10 bg-teal-700/5 px-1 py-0.5 !text-[0.85em] !font-normal !text-teal-800 dark:border-teal-300/10 dark:bg-teal-300/5 dark:!text-teal-200;
+  }
+  .prose :not(pre) > code::before,
+  .prose :not(pre) > code::after {
+    content: none !important;
+  }
+  .shiki,
+  .shiki span {
+    color: var(--shiki-light) !important;
+    background-color: transparent !important;
+  }
+  .dark .shiki,
+  .dark .shiki span {
+    color: var(--shiki-dark) !important;
+  }
 }

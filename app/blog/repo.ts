@@ -29,5 +29,6 @@ export async function getMeta(slug: string): Promise<BlogPostMeta> {
 
 export async function listMetas(): Promise<BlogPostMeta[]> {
   const files = await fs.readdir('./blog');
-  return Promise.all(files.map(async (file) => getMeta(file.replace('.mdx', ''))));
+  const metas = await Promise.all(files.map(async (file) => getMeta(file.replace('.mdx', ''))));
+  return metas.sort((a, b) => Temporal.PlainDate.compare(b.date, a.date));
 }
