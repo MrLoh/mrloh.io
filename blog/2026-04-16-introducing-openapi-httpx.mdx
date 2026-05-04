@@ -1,0 +1,123 @@
+---
+title: 'Introducing OpenAPI HTTPX'
+date: '2026-04-16'
+description: 'A typed HTTPX client generated from OpenAPI in a single file, TypedDicts and @overloads for the wire, your SDK on top.'
+---
+
+import { Button } from '@/components/Button';
+import { Rocket } from 'lucide-react';
+
+
+I just open-sourced [openapi-httpx](https://mrloh.github.io/openapi-httpx/), a tool that generates a typed [HTTPX](https://www.python-httpx.org) client from an OpenAPI specification. I built it because our [Python SDK](https://docs.orcadb.ai) at Orca needed a strongly typed boundary to the backend, and the existing options kept getting in our way.
+
+## The Problem
+
+We started with [openapi-python-client](https://github.com/openapi-generators/openapi-python-client). It works — but it wants to be the SDK, not a tool inside one. It generates a whole package: dozens of files, model classes for every schema, even a `pyproject.toml` we kept having to delete. Every time we needed to customize behavior, we ended up writing Jinja templates against the generator. Every time the spec changed, the PR diff was a wall of generated files nobody could meaningfully review. We were spending more time wrangling the generator than using the client.
+
+[openapi-fetch](https://openapi-ts.dev/openapi-fetch/) in TypeScript got this right: don’t generate an SDK, generate _types_. The runtime is a thin wrapper around `fetch`, and every URL, param, and body is type-checked against the spec. That’s the whole library. We wanted that for Python.
+
+## The Philosophy
+
+Generating an SDK from an OpenAPI spec is a mistake. A good SDK is built on design judgment the spec doesn’t capture — opinions about ergonomics, state, error handling, how operations should compose. So generated SDKs end up either useless (mechanical method-per-endpoint) or impossible to customize (generated code that owns the abstractions you actually wanted to design).
+
+But typing the wire is different. The spec _is_ the contract. If a path expects a string and you pass an int, that’s a real bug, and your editor should tell you before you ship it. The generator’s job stops at the boundary.
+
+So `openapi-httpx` is exactly that. The generated output is a single file containing an `httpx.Client` subclass, a stack of `@overload`s — one per operation — and `TypedDict`s for the params, request bodies, and responses. You use it like any other `httpx.Client`, which means you can extend it with whatever you’d extend a normal client with: event hooks that map HTTP error responses to your domain exceptions, retry transports, request instrumentation, context-var client resolution. Our SDK layers all of those on top of the generated client, with no fight against the generator.
+
+In our SDK, every domain class is a thin wrapper around the typed client:
+
+```python
+from .client import TaskResponse, UpdateTaskBody
+
+class Task:
+    def __init__(self, res: TaskResponse):
+        # constructor is only be called by class methods
+        self.id = res["id"]
+        self.title = res["title"]
+        self.due_date = res["due_date"]
+
+    @classmethod
+    def list(cls) -> list[Self]:
+        return [cls(t) for t in client.GET("/task")]
+
+    @classmethod
+    def get(cls, task_id: str) -> Self:
+        return cls(client.GET("/task/{id}", params={"id": task_id}))
+
+    def update(self, **fields: Unpack[UpdateTaskBody]) -> None:
+        client.PATCH("/task/{id}", params={"id": self.id}, json=fields)
+```
+
+The `Task` example here is deliberately vanilla — a CRUD this simple really could be generated, and the point is just to show what calling the typed client looks like. The case against generators bites for everything that isn’t vanilla: a `create(..., background=True)` overload that returns `Job[Resource]` instead of `Resource`, convenience constructors that adapt familiar input formats (`from_pandas`, `from_hf_dataset`), filter DSLs that take typed tuples and compile to backend queries. The generator owns the contract; we own the abstractions on top. That’s exactly the separation we wanted, and it’s nearly impossible to get from a generator that wants to write your SDK for you.
+
+Keeping it to a single generated file matters in practice — there’s one obvious place where the code-you-shouldn’t-touch lives, and PR diffs stay readable. The bigger payoff comes in CI: regenerate the client whenever the server spec changes, run [pyright](https://github.com/microsoft/pyright) against the SDK, and any backend change that breaks the client contract fails the build before merge. We do this for both our Python SDK and our frontend app, and I genuinely don’t know how anyone integrates against an evolving API without that check.
+
+## TypedDict and Overloads Are Underrated
+
+Two pieces of modern Python typing make this design work, and they don’t get the appreciation they deserve.
+
+`TypedDict` lets you describe the shape of a dict without requiring anyone to construct an object. That ergonomic alone would be useful, but the deeper fit is that `TypedDict` naturally models what JSON actually does on the wire. JSON distinguishes `null` (the field was set to null) from absent key (the field wasn’t sent), and the difference matters — most obviously in `PATCH` requests, where `null` means “clear this field” and an absent key means “leave it alone.” `TypedDict` covers the full grid natively: `field: str` (required, non-null), `field: str | None` (required, nullable), `NotRequired[str]` (optional, non-null), and `NotRequired[str | None]` (optional, nullable). (`openapi-python-client` had to introduce an `UNSET` sentinel to fake the absent case.) I'm just waiting for Inline typed dictionaries ([PEP 764](https://peps.python.org/pep-0764/)) to be adopted now to declutter things.
+
+`@overload` is what stitches a whole API surface into a single typed method. The path argument is a `Literal` string, and each overload is keyed on a different `(method, path)` pair. The type checker picks the right overload from the path you pass:
+
+```python
+class TaskResponse(TypedDict):
+    id: str
+    title: str
+    due_date: datetime | None
+
+class TaskIdParams(TypedDict):
+    id: str
+
+class UpdateTaskBody(TypedDict):
+    title: NotRequired[str]
+    due_date: NotRequired[datetime | None]
+
+class OpenApiClient(Client):
+    """Generated Client with typed overloads"""
+
+    @overload
+    def GET(
+          self,
+          path: Literal["/task"]
+    ) -> list[TaskResponse]: ...
+
+    @overload
+    def GET(
+        self,
+        path: Literal["/task/{id}"],
+        *,
+        params: TaskIdParams,
+    ) -> TaskResponse: ...
+
+    @overload
+    def PATCH(
+        self,
+        path: Literal["/task/{id}"],
+        *,
+        params: TaskIdParams,
+        json: UpdateTaskBody,
+    ) -> TaskResponse: ...
+```
+
+The four typing cells are all in there: `TaskResponse.title` is required and non-null, `TaskResponse.due_date` is required and nullable, and `UpdateTaskBody`’s two fields are both optional, one non-null and one nullable. The same `GET` method dispatches to `list[TaskResponse]` or a single `TaskResponse` based on the path Literal — one method that knows the whole API, no runtime dispatch. The catch is that the path has to stay a literal: `client.GET(f"/task/{task_id}")` breaks type inference, because the path is no longer `Literal["/task/{id}"]` and no overload can match. So path parameters share the `params` dict with query parameters, and the library splits them based on which keys match `{placeholders}` in the path string.
+
+The same `UpdateTaskBody` types both the wire body in the generated client (`json: UpdateTaskBody` in the PATCH overload) and the kwargs of `Task.update()` in the SDK (`**fields: Unpack[UpdateTaskBody]`). One TypedDict, two roles — and that’s what makes the three obvious calls behave the way you’d want:
+
+```python
+task.update(due_date=next_week)   # reschedule {"due_date": "..."}
+task.update(due_date=None)        # clear deadline {"due_date": null}
+task.update(title="Write blog")   # keep deadline {"title": "..."}
+```
+
+Same method, three different wire intents — set, clear, leave alone — distinguished by exactly the absent-vs-null distinction `NotRequired[datetime | None]` encodes. That’s why `update()` can be one method instead of three; without that distinction, every call would have to send the full object to avoid clobbering other fields.
+
+Pydantic earns its keep at trust boundaries — that’s why our FastAPI handlers use it, and why those models drive the OpenAPI schema in the first place. But duplicating that validation on the client is the wrong place for it. The server should be the single source of truth; re-validating on the client means keeping two copies of the contract in sync, with the client always lagging the server. And Pydantic is a heavy dependency to inflict on SDK users, who may already be pinning a different major version for their own reasons.
+
+## Credit Where It’s Due
+
+The heavy lifting — parsing the spec, resolving refs, emitting type definitions — is all [datamodel-code-generator](https://koxudaxi.github.io/datamodel-code-generator/), which is a fantastic project. `openapi-httpx` is mostly the `httpx.Client` subclass and the per-operation `@overload`s layered on top.
+
+I did need to land two small features upstream first. [#2444](https://github.com/koxudaxi/datamodel-code-generator/pull/2444) exposes the parameter and request body types to downstream tools (the response types already were). [#2445](https://github.com/koxudaxi/datamodel-code-generator/pull/2445) lets path parameters be folded into the generated `Parameters` model, so endpoints like `/task/{id}` actually have a typed param model. Thanks to the maintainer for the quick reviews.
+
+<Button href="https://mrloh.github.io/openapi-httpx/" className="mx-auto w-80 mt-6">give it a try <Rocket className="size-4" /></Button>
