@@ -19,7 +19,7 @@ function Post({
     <Link
       href={`/blog/${slug}`}
       className={twJoin(
-        'group mb-4 flex flex-col',
+        'group -mx-4 mb-4 flex flex-col',
         'rounded-lg px-4 py-3 transition-all',
         'hover:bg-zinc-100 focus:bg-zinc-100',
         'dark:hover:bg-zinc-800/50 dark:focus:bg-zinc-800/50',
@@ -60,13 +60,15 @@ function Post({
 export default async function BlogHomePage() {
   const blogPosts = await listMetas();
   return (
-    <div className="flex max-w-2xl flex-col">
-      <p className="mx-4 mt-4 mb-6 border-b border-zinc-300 pb-6 text-center text-sm text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
-        thoughts on software engineering, product design, startups, business, and life
-      </p>
-      {blogPosts.map((post) => (
-        <Post key={post.slug} {...post} />
-      ))}
+    <div className="mx-8 flex w-full max-w-7xl flex-col items-center sm:px-8 lg:px-16">
+      <div className="article-grid w-full max-w-none">
+        <p className="mx-4 mt-4 mb-6 border-b border-zinc-300 pb-6 text-center text-lg text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
+          thoughts on code & life
+        </p>
+        {blogPosts.map((post) => (
+          <Post key={post.slug} {...post} />
+        ))}
+      </div>
     </div>
   );
 }

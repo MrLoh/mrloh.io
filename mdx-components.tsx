@@ -1,25 +1,21 @@
 import { SquareArrowOutUpRight } from 'lucide-react';
 import type { MDXComponents } from 'mdx/types';
-import Image, { ImageProps } from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
+import type { JSX } from 'react';
 import { twJoin } from 'tailwind-merge';
 
-import { CodeBlock } from '@/components/CodeBlock';
+import { CodeBlock, InlineCode } from '@/components/CodeBlock';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
-    img: (props) => (
-      <Image
-        sizes="100vw"
-        style={{ width: '100%', height: 'auto' }}
-        {...(props as ImageProps)}
-        alt={props.alt}
-      />
+    img: ({ alt, src }: JSX.IntrinsicElements['img']) => (
+      <Image sizes="100vw" style={{ width: '100%', height: 'auto' }} src={src!} alt={alt!} />
     ),
-    a: (props) =>
-      props.href.startsWith('http') ? (
+    a: ({ href, children }: JSX.IntrinsicElements['a']) =>
+      !href || href.startsWith('http') ? (
         <a
-          {...props}
+          href={href}
           className={twJoin(
             'group font-inherit font-normal text-inherit no-underline',
             'hover:text-teal-500 focus:text-teal-500',
@@ -27,7 +23,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
           )}
           target="_blank"
         >
-          {props.children}
+          {children}
           <SquareArrowOutUpRight
             viewBox="-2 -2 28 28"
             className={twJoin(
@@ -38,9 +34,28 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
           />
         </a>
       ) : (
-        <Link {...props} className="text-teal-500" />
+        <Link href={href} className="text-teal-500">
+          {children}
+        </Link>
       ),
-    pre: (props) => <CodeBlock>{props.children as React.ReactElement<{ className?: string; children?: string }>}</CodeBlock>,
+    code: ({ children }: JSX.IntrinsicElements['code']) => <InlineCode>{children}</InlineCode>,
+    pre: ({ children }: JSX.IntrinsicElements['pre']) =>
+      children &&
+      typeof children === 'object' &&
+      'props' in children &&
+      children.props &&
+      typeof children.props === 'object' &&
+      'children' in children.props &&
+      typeof children.props.children === 'string' ? (
+        <CodeBlock
+          code={children.props.children}
+          lang={
+            'className' in children.props && typeof children.props.className === 'string'
+              ? children.props.className.replace('language-', '')
+              : undefined
+          }
+        />
+      ) : null,
     ...components,
   };
 }

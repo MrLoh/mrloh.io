@@ -2,6 +2,7 @@
 title: 'Your Errors Deserve a Domain Model'
 date: '2026-04-29'
 description: 'Why application errors need shared types, boundary remapping, and observability so product meaning survives from backend to UI.'
+blueskyId: '3mkpo7xoyu22z'
 ---
 
 Errors are often treated as an afterthought. We put a lot of care into domain models, API boundaries, frontend state, and user flows — and then an error happens, and all of that structure disappears. The backend throws a generic exception, the API maps it to whichever HTTP status code feels close enough, the frontend guesses, and the user sees some version of “something went wrong.”
@@ -133,11 +134,11 @@ This is the practical meaning of “errors are relative to the caller.”
 
 ### Translate at the UI Boundary
 
-Forms should know how to handle invalid input results. If the submission returns field errors, the form maps them to fields and renders inline messages. Anything else belongs to a page or dialog-level error helper.
+Forms should know how to handle invalid input results. If the submission returns field errors, our form component automatically maps them to fields and renders inline messages. Anything else belongs to a page or dialog-level error helper.
 
 That split keeps form code boring. Forms render field errors. Everything else belongs to a different UI boundary.
 
-The types make this split hard to violate. The `Form` component’s post-submit branch is three lines: success, invalid input (mapped to fields), or anything else (handed to `showErrorDialog`). The page-level error type is the rejection union with invalid input excluded, so a page renderer can’t consume a field error and a form can’t render one as a dialog.
+The types make this split hard to violate. The form component’s post-submit branch is three lines: success, invalid input (mapped to fields), or anything else (handed by a dialog helper). The page-level error type is the rejection union with invalid input excluded, so a page renderer can’t consume a field error and a form can’t render one as a dialog.
 
 Once the frontend has a typed page-level or action-level error, rendering should be centralized. Unauthenticated can become login UX. Unauthorized can explain the missing permission. Not found can explain which resource is missing. Unavailable can offer retry. Invariant violation can become an action-level dialog. Bugs can show a digest and a support path. This keeps individual features from inventing their own error UX.
 
