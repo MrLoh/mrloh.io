@@ -6,9 +6,26 @@ import { twJoin } from 'tailwind-merge';
 const scopes = {
   comments: ['comment', 'punctuation.definition.comment'],
   keywords: ['keyword', 'storage.type', 'storage.modifier', 'variable.language'],
-  names: ['entity.name', 'support.class', 'support.type', 'entity.other.inherited-class'],
+  names: [
+    'entity.name',
+    'support.class',
+    'support.type',
+    'entity.other.inherited-class',
+    'meta.function-call.generic',
+  ],
   literals: ['string', 'constant', 'string.regexp', 'keyword.other.unit'],
   punctuation: ['punctuation', 'keyword.operator', 'meta.brace'],
+  decorators: [
+    'meta.function.decorator',
+    'meta.function.decorator entity.name',
+    'meta.function.decorator entity.other.inherited-class',
+    'meta.function.decorator support.type',
+    'meta.function.decorator support.class',
+    'meta.function.decorator support.function',
+    'meta.function.decorator variable',
+    'meta.function.decorator punctuation',
+    'punctuation.definition.decorator',
+  ],
 } satisfies Record<string, string[]>;
 
 const background = 'border-teal-500/20 bg-teal-500/2';
@@ -25,10 +42,11 @@ const makeTheme = (dark: boolean): ThemeRegistration => {
     colors: { 'editor.background': 'transparent', 'editor.foreground': 'inherit' },
     tokenColors: [
       { scope: scopes.comments, settings: styles('zinc-400', 'zinc-500', 'italic') },
-      { scope: scopes.keywords, settings: styles('amber-500', 'amber-500', 'italic') },
+      { scope: scopes.keywords, settings: styles('amber-500', 'orange-300', 'italic') },
       { scope: scopes.names, settings: styles('teal-500', 'teal-400') },
       { scope: scopes.literals, settings: styles('sky-500', 'sky-300') },
       { scope: scopes.punctuation, settings: styles('zinc-500', 'zinc-500') },
+      { scope: scopes.decorators, settings: styles('zinc-400', 'zinc-500', 'italic') },
     ],
   };
 };

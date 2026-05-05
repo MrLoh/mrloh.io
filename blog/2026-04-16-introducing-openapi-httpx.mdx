@@ -5,9 +5,9 @@ description: 'A typed HTTPX client generated from OpenAPI in a single file, Type
 blueskyId: '3ml2uo4g4qs2n'
 ---
 
-import { Button } from '@/components/Button';
 import { Rocket } from 'lucide-react';
 
+import { Button } from '@/components/Button';
 
 I just open-sourced [openapi-httpx](https://mrloh.github.io/openapi-httpx/), a tool that generates a typed [HTTPX](https://www.python-httpx.org) client from an OpenAPI specification. I built it because our [Python SDK](https://docs.orcadb.ai) at Orca needed a strongly typed boundary to the backend, and the existing options kept getting in our way.
 
@@ -121,4 +121,6 @@ The heavy lifting — parsing the spec, resolving refs, emitting type definition
 
 I did need to land two small features upstream first. [#2444](https://github.com/koxudaxi/datamodel-code-generator/pull/2444) exposes the parameter and request body types to downstream tools (the response types already were). [#2445](https://github.com/koxudaxi/datamodel-code-generator/pull/2445) lets path parameters be folded into the generated `Parameters` model, so endpoints like `/task/{id}` actually have a typed param model. Thanks to the maintainer for the quick reviews.
 
-<Button href="https://mrloh.github.io/openapi-httpx/" className="mx-auto w-80 mt-6">give it a try <Rocket className="size-4" /></Button>
+<Button href="https://mrloh.github.io/openapi-httpx/" className="mx-auto mt-6 w-80">
+  give it a try <Rocket className="size-4" />
+</Button>

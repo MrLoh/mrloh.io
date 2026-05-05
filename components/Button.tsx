@@ -15,7 +15,7 @@ export function Button({
       onClick?: () => unknown;
     } & React.ComponentProps<'button'>)) {
   const buttonClassName = twMerge(
-    'flex grow basis-60 items-center justify-center gap-2 rounded-md px-4 py-2 transition',
+    'flex grow basis-60 items-center justify-center gap-2 rounded-md px-4 py-2 transition [&>p]:contents',
     'text-sm text-zinc-800 italic no-underline dark:text-zinc-200',
     'bg-zinc-100 dark:bg-zinc-800',
     'hover:bg-teal-500 hover:text-white hover:shadow-lg hover:shadow-teal-400/20 dark:hover:bg-teal-600',
