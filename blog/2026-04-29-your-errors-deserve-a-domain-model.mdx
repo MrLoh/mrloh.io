@@ -38,7 +38,7 @@ type DomainError =
   | { type: 'UNAUTHENTICATED' }
   | { type: 'UNAUTHORIZED'; reason: string }
   | { type: 'NOT_FOUND'; resource: string }
-  | { type: 'INVALID_INPUT'; errors: {[field: string]: string} }
+  | { type: 'INVALID_INPUT'; errors: { [field: string]: string } }
   | { type: 'INVARIANT_VIOLATION'; invariant: string }
   | { type: 'UNAVAILABLE'; service: string }
   | { type: 'BUG'; origin: string; digest: string };
@@ -94,7 +94,7 @@ Add a subtype when the product needs distinct behavior. Don’t add one just bec
 
 An outage means the request may be valid, but the system can’t complete it right now. This includes dependency outages, network failures, gateway errors, timeouts, overloaded services, unavailable workers, and offline clients.
 
-Outages aren’t product decisions; they’re operational signals.
+Outages aren’t product decisions, they’re operational signals.
 
 From the user’s perspective, many outages look the same: the system can’t do the thing right now. The UX should usually allow retrying or tell the user to come back later. The client can retry automatically when the action is safe to repeat. If the problem persists, show a page or dialog that names the unavailable service at a useful level of abstraction.
 
@@ -112,35 +112,75 @@ The worst outcome is a catch block that swallows the exception, loses the stack 
 
 The taxonomy is only useful if developers don’t have to remember it every time they handle an error. The goal is to make the right thing the easy thing.
 
+### Translate at the UI Boundary
+
+The UI handles errors through a small set of helpers, one for each shape of failure: data fetches, single user actions, and form submissions. Each accepts a typed error and renders the right thing automatically.
+
+The simplest case is data fetching. A page or component receives a `Result`, and if the fetch failed it returns one of two error components instead of its normal output:
+
+```tsx
+// page-level data fetch
+if (org.err) return <ErrorPage {...org.err} />;
+
+// component-level data fetch
+{user.err ? <InlineError {...user.err} /> : <UserCard user={user.val} />}
+```
+
+`ErrorPage` is the full-page state, `InlineError` is the same content rendered as a card or list-item state for when one piece of a page fails without the rest. Both are powered by a single exhaustive `match` over `PageResultError` — the rejection union with invalid input excluded, since field errors don’t make sense outside a form. Adding a new variant breaks the build until every renderer handles it. Even the framework-level uncaught-error boundary renders the same `ErrorPage` with `type: 'BUG'`, so a thrown render error and a returned bug result land in the same UX.
+
+For things triggered by user actions — delete buttons, retries, anything that isn’t a form submission — the same content matrix is exposed as an imperative helper that opens a modal:
+
+```ts
+const res = await deleteThing(id);
+if (res.err) return showErrorDialog(res.err);
+```
+
+The bug branch shows the same digest and the same one-click pre-filled support email; only the chrome is different.
+
+Forms are the tricky case because a submission can return either a field error that belongs inline under an input, or any other kind of error that should be rendered as a dialog. Our `<Form>` component wraps React Hook Form and Zod so developers write a schema and field components and the routing happens automatically. There are no `try`/`catch` blocks, no `if (res.err)` branches, and no calls to a toast or dialog helper inside any individual form.
+
+Three things make that work. The `<Form>` component takes the Zod schema as a prop and uses it both to validate the input client-side and to type the data passed into `onSubmit`. Each field component (`FormTextField`, `FormSelectField`, `FormCheckboxField`, …) registers itself with the form context, reads its own error message from form state, and passes it into a shared `InputLabel` that draws the inline error under the input. And the wrapper handles the post-submit result with one branch and dispatches everything that isn’t a field error to `showErrorDialog`, so the form code never has to know about unauthorized, unavailable, invariant violation, or bug. A typical form definition is just a schema and some fields:
+
+```tsx
+<Form
+  schema={inviteSchema}
+  onSubmit={sendOrgInviteAction}
+  onSuccess={(d) => {
+    toast.success(`Sent invite to ${d.email}`);
+    router.refresh();
+  }}
+>
+  <FormTextField name="email" label="Email" />
+  <FormSelectField name="role" label="Role" options={roleOptions} />
+  <FormSubmitButton label="Send Invite" />
+</Form>
+```
+
+That’s the entire surface. No error rendering, no submit-state bookkeeping, no branching logic. The Zod schema validates client-side and types `onSubmit`, so local mistakes never round-trip and whatever `INVALID_INPUT` comes back is genuine server-state validation like a uniqueness check; the wrapper feeds each field’s message into `setError`, focuses the first failure, and routes anything that isn’t a field error through `showErrorDialog`.
+
 ### Return Rejections, Throw Bugs
 
-Expected rejections should be typed return values. Invalid input, not found, unauthenticated, unauthorized, invariant violation, and domain-specific rejections like quota exceeded are part of the product contract, not bugs. A service that can reject a request for domain reasons should say so in its return type.
+For any of that to work, the typed errors have to actually reach the UI. In Next.js, that is harder than it sounds: a thrown `Error` from a server action reaches the client as an opaque object with a digest and nothing else — no message, no cause, no fields, no type discriminator. The taxonomy only survives the round trip if it is encoded as data, so every server action returns `Result<T, E>` where the error is one of the rejection types above. Policy helpers benefit especially: a typed unauthorized result with an explicit reason lets application code distinguish “the actor can’t do this” from “the operation violates the current domain state”.
 
-This is especially useful for authorization. Policy helpers should return typed unauthorized results with clear reasons, not random booleans or thrown strings. That lets application code distinguish “the actor can’t do this” from “the operation violates the current domain state.”
+That rule lives as a single line in our agents file: never throw from business logic, return `Result<T, E>`. Coding agents follow that one line better than any prose explanation of the taxonomy.
 
-Throwing still has a place. It’s appropriate for broken assumptions and impossible states. The mistake is catching those errors too early or translating them into vague product failures. Catch unexpected errors at a clear outer boundary, preserve the diagnostic context, and turn them into bug results there. The exact abstraction matters less than having a known place where unexpected failures become observable bugs.
+Bugs are the exception. Throwing is appropriate for broken assumptions and impossible states, and unavoidable in backends that already use exceptions for HTTP control flow. The rule is to catch those throws at a clear outer boundary, preserve the diagnostic context, and turn them into bug results before they leak.
 
-The same rule lives as a single line in our agents file: never throw from business logic, return `Result<T, E>`. Coding agents follow that one line better than any prose explanation of the taxonomy.
+In our Python backend, that outer boundary is the framework’s exception-handler layer. Typed domain exceptions like `InvalidInput`, `ConstraintViolation`, `NotFound`, and `ServiceUnavailable` get registered handlers that emit a stable JSON body per type — `422 { validation_issues }`, `409 { constraint }`, `404 { resource }`, `503 { service }`. A single catch-all handler converts every other exception into `{ status_code: 500, message, request_id }`, with a generic message in production and the original message in development. Stack traces stay in logs, only the request id reaches the client.
 
-Concretely, a single `catchBug` wrapper turns thrown errors into `Bug` results. The full stack and cause stay server-side in logs; the result that travels to the client carries only an origin tag and a short digest. The UI renders a generic message, the digest, and a “copy and email support” button — actionable for the user, opaque about internals.
+In our Next.js frontend, the equivalent is a single `catchBug` wrapper that turns thrown errors into `Bug` results. The full stack and cause stay server-side in logs, the result that travels to the client carries only an origin tag and a short digest code that the UI displays, to help correlate user reports with backend logs.
 
 ### Remap Errors at Every Boundary
 
-The most important implementation pattern is boundary remapping. An API client shouldn’t blindly pass through every error response it receives. It should translate remote errors into the local error model of its caller.
+Once errors are typed and travel as data, the other key implementation pattern is boundary remapping. An API client shouldn’t blindly pass through every error response it receives. It should translate remote errors into the local error model of its caller. The trickiest case is invalid input, because a field error only makes sense if the caller can tie it back to one of its own form fields.
 
-A `422` from a backend only becomes invalid input when the client supplies a mapping from remote field paths to local form fields. Without that mapping, the `422` becomes a bug, not a silent passthrough. A `401` or `403` from a service-to-service call using a central API key is also a bug rather than unauthorized — the user could never have caused it. Network errors and gateway codes like `502` or `504` normalize to unavailable.
+For that to be possible, every field error has to address the field by its location in the request, not by some local name the backend invented. The framework handles that for schema-level validation by default. The harder cases are validations that can’t run until state is loaded — uniqueness checks, cross-resource invariants, compatibility between two resources. We put those on the request model itself, as instance methods that take the loaded state as a parameter and raise `InvalidInput` with the same `("body", "<field>")` location format the framework emits. The validators sit next to the field definitions, and the API client sees one location format whether the rejection came from the schema or a hand-written rule.
 
-This is the practical meaning of “errors are relative to the caller.”
+That uniformity is what makes the client-side mapping deterministic. The frontend declares `invalidInputMapping: { inputValue: ['input_values', 0] }`, the API client compares each remote `loc` against the mapping’s values, and a match becomes a typed `INVALID_INPUT` keyed on the local field name. Without that mapping, a `422` becomes a bug — the user can’t fix a field the UI doesn’t know exists, so a silent passthrough would hide stale state, schema drift, or a contract bug. The type system enforces the opt-in: the result type of each API call only narrows to `InvalidInput<keyof mapping>` when a mapping is provided.
 
-### Translate at the UI Boundary
+The other status codes get translated similarly. Because our frontend server talks to the backend with a central service credential, a backend `401` or `403` is never the user’s fault — those become bugs. Network errors and gateway codes like `502` and `504` normalize to unavailable. A backend `500` becomes a bug too, with the backend’s `request_id` reused as the bug digest, so the user-facing digest is correlatable to the backend log line.
 
-Forms should know how to handle invalid input results. If the submission returns field errors, our form component automatically maps them to fields and renders inline messages. Anything else belongs to a page or dialog-level error helper.
-
-That split keeps form code boring. Forms render field errors. Everything else belongs to a different UI boundary.
-
-The types make this split hard to violate. The form component’s post-submit branch is three lines: success, invalid input (mapped to fields), or anything else (handed by a dialog helper). The page-level error type is the rejection union with invalid input excluded, so a page renderer can’t consume a field error and a form can’t render one as a dialog.
-
-Once the frontend has a typed page-level or action-level error, rendering should be centralized. Unauthenticated can become login UX. Unauthorized can explain the missing permission. Not found can explain which resource is missing. Unavailable can offer retry. Invariant violation can become an action-level dialog. Bugs can show a digest and a support path. This keeps individual features from inventing their own error UX.
+This is the practical meaning of “errors are relative to the caller.” The same union also travels outside JSON HTTP: a SCIM endpoint exhaustive-matches it and emits the corresponding RFC-7644 body, an OAuth callback that can’t return JSON serializes the error into a redirect query parameter, and a streaming chat route returns pre-stream errors as a normal HTTP response and mid-stream errors as JSON-encoded frames inside the body.
 
 ### Wire Errors into Observability
 
