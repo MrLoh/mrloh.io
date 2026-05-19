@@ -47,10 +47,44 @@
   .prose h3 {
     @apply !text-base !font-bold !text-zinc-700 dark:!text-zinc-300;
   }
+  .prose :where(ul > li, ol > li)::marker {
+    color: var(--tw-prose-body) !important;
+  }
+  .prose :where(ul, ol) {
+    margin-top: 0.75em !important;
+  }
+  .prose :where(:is(p, h2, h3, h4) + :is(ul, ol)) {
+    margin-top: 0 !important;
+  }
+  .prose :where(ul > li:first-child, ol > li:first-child) {
+    margin-top: 0 !important;
+  }
+  .prose :where(ul) {
+    list-style-type: '- ' !important;
+    list-style-position: outside;
+    padding-inline-start: 1em !important;
+  }
+  .prose :where(ul > li) {
+    padding-inline-start: 0.75em !important;
+  }
+  /* Wider marker column for numbers; li text still lines up with ul (1.75em total) */
+  .prose :where(ol) {
+    padding-inline-start: 1.5em !important;
+  }
+  .prose :where(ol > li) {
+    padding-inline-start: 0.25em !important;
+  }
+  .prose :where(code),
+  .shiki,
+  .shiki code,
+  .shiki span {
+    font-feature-settings: normal;
+  }
   .shiki,
   .shiki code,
   .shiki span {
     font-family: var(--font-sans) !important;
+    line-height: 1.625;
     color: var(--shiki-light) !important;
     background-color: transparent !important;
     font-style: var(--shiki-light-font-style, inherit) !important;

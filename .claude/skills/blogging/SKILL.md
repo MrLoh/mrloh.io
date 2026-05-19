@@ -7,6 +7,10 @@ description: Draft or revise blog posts in Tobias's voice. Use when writing, edi
 
 Use this skill to draft or revise blog posts so they sound like Tobias.
 
+## Don’t Fabricate
+
+This rule is mandatory and overrides every other instruction in this skill. If a sentence wants a concrete detail that isn’t in the draft, the chat, or the repo, stop and ask the author. Do not write around it, do not pick a plausible substitute, do not infer from analogous projects or prior posts. Ask. This covers details, specifics, numbers, timelines, etc.
+
 ## Voice
 
 Write plainly, directly, and with visible reasoning.
