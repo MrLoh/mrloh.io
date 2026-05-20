@@ -5,7 +5,7 @@ import { ChevronDown, MoonStar, Sun, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import AvatarImage from '@/components/Avatar';
@@ -92,12 +92,11 @@ function DesktopNavigation({ links }: { links: { href: string; name: string }[] 
 function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const otherTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
   return (
     <button
       type="button"
-      aria-label={mounted ? `Switch to ${otherTheme} theme` : 'Toggle theme'}
+      aria-label="Toggle theme"
       className={twJoin(
         'group flex h-9 w-12 justify-center rounded-full bg-white/90 px-3 py-2 backdrop-blur dark:bg-zinc-800/90',
         'ring-1 shadow-lg shadow-zinc-800/5 ring-zinc-900/5 dark:ring-white/10',

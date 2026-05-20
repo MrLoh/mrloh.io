@@ -9,9 +9,10 @@ import { CodeBlock, InlineCode } from '@/components/CodeBlock';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
-    img: ({ alt, src }: JSX.IntrinsicElements['img']) => (
-      <Image sizes="100vw" style={{ width: '100%', height: 'auto' }} src={src!} alt={alt!} />
-    ),
+    img: ({ alt, src }: JSX.IntrinsicElements['img']) =>
+      typeof src === 'string' ? (
+        <Image sizes="100vw" style={{ width: '100%', height: 'auto' }} src={src} alt={alt ?? ''} />
+      ) : null,
     a: ({ href, children }: JSX.IntrinsicElements['a']) =>
       !href || href.startsWith('http') ? (
         <a
