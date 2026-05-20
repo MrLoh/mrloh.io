@@ -47,32 +47,34 @@
   .prose h3 {
     @apply !text-base !font-bold !text-zinc-700 dark:!text-zinc-300;
   }
-  .prose :where(ul > li, ol > li)::marker {
-    color: var(--tw-prose-body) !important;
-  }
   .prose :where(ul, ol) {
+    list-style: none !important;
     margin-top: 0.75em !important;
+    padding-inline-start: 1.5em !important;
+    text-indent: 0;
+    counter-reset: prose-ol;
   }
   .prose :where(:is(p, h2, h3, h4) + :is(ul, ol)) {
     margin-top: 0 !important;
   }
-  .prose :where(ul > li:first-child, ol > li:first-child) {
-    margin-top: 0 !important;
+  .prose :where(ul, ol) > li {
+    padding-inline-start: 0 !important;
+    text-indent: -1.5em;
+    counter-increment: prose-ol;
   }
-  .prose :where(ul) {
-    list-style-type: '- ' !important;
-    list-style-position: outside;
-    padding-inline-start: 1em !important;
+  .prose :where(ul, ol) > li::before {
+    display: inline-block;
+    width: 1em;
+    margin-inline-end: 0.5em;
+    text-indent: 0;
+    color: inherit;
+    font-variant-numeric: tabular-nums;
   }
-  .prose :where(ul > li) {
-    padding-inline-start: 0.75em !important;
+  .prose :where(ul) > li::before {
+    content: '\2013'; /* en dash */
   }
-  /* Wider marker column for numbers; li text still lines up with ul (1.75em total) */
-  .prose :where(ol) {
-    padding-inline-start: 1.5em !important;
-  }
-  .prose :where(ol > li) {
-    padding-inline-start: 0.25em !important;
+  .prose :where(ol) > li::before {
+    content: counter(prose-ol) '.';
   }
   .prose :where(code),
   .shiki,

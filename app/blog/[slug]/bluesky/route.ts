@@ -18,7 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     limit: 1,
   });
   if (!res.success) return new Response('Not found', { status: 404 });
-  const postId = res.data.posts[0].uri.split('/').pop();
+  const postId = res.data.posts[0]?.uri.split('/').pop();
   if (!postId) return new Response('Not found', { status: 404 });
 
   if (req.nextUrl.searchParams.get('return') === null) {
