@@ -209,8 +209,13 @@ export default function Comments({ blueskyId }: { blueskyId?: string }) {
   const postUrl = `https://bsky.app/profile/${DOMAIN}/post/${blueskyId || post.uri.split('/').pop()!}`;
 
   return (
-    <section className="mt-12 -mb-10 flex w-full flex-col items-center">
-      <div className="mb-1 flex w-full max-w-2xl flex-1 flex-wrap justify-center gap-x-8 px-6 text-sm min-[30rem]:justify-between">
+    <section className="mt-12 -mb-10 flex w-full flex-col">
+      <div
+        className={twJoin(
+          'prose-wrap',
+          'mb-1 flex flex-1 flex-wrap justify-center gap-x-8 text-sm min-[30rem]:justify-between',
+        )}
+      >
         <span className="mb-2 flex items-center gap-3 font-extrabold text-zinc-600 uppercase dark:text-zinc-300">
           <a
             href={postUrl}
@@ -257,7 +262,7 @@ export default function Comments({ blueskyId }: { blueskyId?: string }) {
         </span>
       </div>
       <hr className="w-full border-t border-zinc-100 dark:border-zinc-700/40" />
-      <div className="w-full max-w-2xl px-6 pt-5">
+      <div className="prose-wrap pt-5">
         {replies.length === 0 ? (
           <a
             href={postUrl}

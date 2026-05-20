@@ -60,8 +60,8 @@ function Post({
 export default async function BlogHomePage() {
   const blogPosts = await listMetas();
   return (
-    <div className="mx-8 flex w-full max-w-7xl flex-col items-center sm:px-8 lg:px-16">
-      <div className="article-grid w-full max-w-none">
+    <div className="flex flex-col">
+      <div className="prose-max mt-4">
         <p className="mx-4 mt-4 mb-6 border-b border-zinc-300 pb-6 text-center text-lg text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
           thoughts on code & life
         </p>

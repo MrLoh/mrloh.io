@@ -74,9 +74,9 @@ export async function CodeBlock({ code, lang }: { code: string; lang?: string })
   });
 
   return (
-    <div className={twJoin('full-bleed not-prose my-6 border-y', background)}>
+    <div className={twJoin('not-prose my-6 w-full border-y', background)}>
       <pre
-        className="col-start-2 min-w-0 overflow-x-auto py-8 text-sm font-normal"
+        className={twJoin('prose-max prose-px', 'min-w-0 overflow-x-auto py-8 text-sm font-normal')}
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>

@@ -153,7 +153,7 @@ function Avatar() {
           />
         </span>
       )}
-      <Link href="/" aria-label="Home" className={twJoin('pointer-events-auto')}>
+      <Link href="/" aria-label="Home" className="pointer-events-auto">
         <AvatarImage
           className="top-1px left-1px absolute rounded-full bg-zinc-100 backdrop-blur dark:bg-zinc-800/90"
           size={44}
@@ -165,10 +165,9 @@ function Avatar() {
 }
 
 export function Header({ links }: { links: { href: string; name: string }[] }) {
-  const headerRef = useRef<React.ElementRef<'div'>>(null);
-  const avatarRef = useRef<React.ElementRef<'div'>>(null);
+  const headerRef = useRef<React.ComponentRef<'div'>>(null);
+  const avatarRef = useRef<React.ComponentRef<'div'>>(null);
   const isInitial = useRef(true);
-
   useEffect(() => {
     const downDelay = avatarRef.current?.offsetTop ?? 0;
     const upDelay = 64;
@@ -219,6 +218,8 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
     }
 
     function updateAvatarStyles() {
+      if (downDelay <= 0) return;
+
       const fromScale = 1;
       const toScale = 36 / 64;
       const fromX = 0;
@@ -270,19 +271,14 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
           style={{ position: 'var(--header-position)' as React.CSSProperties['position'] }}
         >
           <div
+            ref={avatarRef}
             className={twJoin(
-              'top-[var(--header-top,theme(spacing.6))] w-full',
-              'mx-auto w-full max-w-7xl sm:px-6 lg:px-8',
+              'header-inner',
+              'top-[var(--header-top,theme(spacing.6))] z-50 w-full',
+              'layout-7xl layout-px',
             )}
-            style={{ position: 'var(--header-inner-position)' as React.CSSProperties['position'] }}
           >
-            <div
-              className={twJoin(
-                'px-4 sm:px-6 lg:px-12',
-                'mx-auto max-w-2xl lg:max-w-5xl',
-                'relative flex gap-4',
-              )}
-            >
+            <div className="prose-max relative flex gap-4">
               <div className="flex flex-1">
                 <Avatar />
               </div>

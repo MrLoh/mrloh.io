@@ -1,5 +1,3 @@
-import { twJoin } from 'tailwind-merge';
-
 import { DOMAIN } from '@/config';
 
 import { getMeta, listSlugs } from '../repo';
@@ -29,11 +27,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const { title, date, blueskyId } = await getMeta(slug);
   const { default: Post } = await import(`@/blog/${slug}.mdx`);
   return (
-    <div className="mx-8 flex w-full max-w-7xl flex-col items-center sm:px-8 lg:px-16">
-      <article
-        className={twJoin('prose prose-zinc dark:prose-invert article-grid mt-6 w-full max-w-none')}
-      >
-        <time className="text-sm font-semibold text-zinc-500 uppercase">
+    <div className="flex flex-col">
+      <article className="prose prose-zinc dark:prose-invert mt-6 w-full max-w-none">
+        <time className="block text-sm font-semibold text-zinc-500 uppercase">
           {date.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
         </time>
         <h1>{title}</h1>

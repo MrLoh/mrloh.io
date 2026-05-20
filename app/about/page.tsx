@@ -5,8 +5,8 @@ import { Button } from '@/components/Button';
 export default async function AboutPage() {
   const { default: Content } = await import('./about.mdx');
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col items-center sm:px-8 lg:px-16">
-      <article className="prose prose-zinc dark:prose-invert article-grid relative mt-6 w-full max-w-none">
+    <div className="flex flex-col">
+      <article className="prose prose-zinc dark:prose-invert relative mt-6 w-full max-w-none">
         <h1 className="flex justify-between">
           <div>About Me</div>
           <svg className="mt-1 size-8 fill-teal-500" viewBox="0 0 512 512" version="1.1">
@@ -14,7 +14,7 @@ export default async function AboutPage() {
           </svg>
         </h1>
         <Content />
-        <div className="mt-10 flex items-center gap-12">
+        <div className="prose-max mt-10 flex items-center gap-12">
           <Button href="/resume.pdf">
             download resume
             <Download className="size-4" />

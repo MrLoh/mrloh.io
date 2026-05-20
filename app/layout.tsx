@@ -27,31 +27,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/kik7per.css" />
       </head>
-      <body className={twJoin('flow-root min-h-screen antialiased', 'bg-zinc-50 dark:bg-black')}>
+      <body className="bg-zinc-50 antialiased dark:bg-black">
         <Providers>
-          <div className="fixed inset-0 flex justify-center sm:px-8">
-            <div className="flex w-full max-w-7xl lg:px-8">
-              <div className="w-full bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20" />
+          <div className="layout min-h-dvh">
+            <div className="layout-7xl">
+              <div
+                className={twJoin(
+                  'flex min-h-dvh w-full flex-col',
+                  'bg-white ring-1 ring-zinc-100',
+                  'dark:bg-zinc-900 dark:ring-zinc-300/20',
+                )}
+              >
+                <Header
+                  links={[
+                    { href: '/blog', name: 'Blog' },
+                    { href: '/about', name: 'About' },
+                    // { href: '/projects', name: 'Projects' },
+                  ]}
+                />
+                <main className="flex flex-auto flex-col">{children}</main>
+                <Footer
+                  links={[
+                    // { href: '/', name: 'Home' },
+                    { href: '/blog', name: 'Blog' },
+                    { href: '/about', name: 'About' },
+                    // { href: '/projects', name: 'Projects' },
+                    { href: '/colophon', name: 'Colophon' },
+                  ]}
+                />
+              </div>
             </div>
-          </div>
-          <div className="relative flex min-h-screen w-full flex-col">
-            <Header
-              links={[
-                { href: '/blog', name: 'Blog' },
-                { href: '/about', name: 'About' },
-                // { href: '/projects', name: 'Projects' },
-              ]}
-            />
-            <main className="flex flex-auto flex-col">{children}</main>
-            <Footer
-              links={[
-                // { href: '/', name: 'Home' },
-                { href: '/blog', name: 'Blog' },
-                { href: '/about', name: 'About' },
-                // { href: '/projects', name: 'Projects' },
-                { href: '/colophon', name: 'Colophon' },
-              ]}
-            />
           </div>
         </Providers>
         <Analytics />
