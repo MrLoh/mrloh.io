@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/kik7per.css" />
       </head>
-      <body className="bg-zinc-50 antialiased dark:bg-black">
+      <body className="bg-white antialiased sm:bg-zinc-50 dark:bg-zinc-900 sm:dark:bg-black">
         <Providers>
           <div className="layout min-h-dvh">
             <div className="layout-7xl">

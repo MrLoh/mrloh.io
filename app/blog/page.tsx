@@ -19,8 +19,8 @@ function Post({
     <Link
       href={`/blog/${slug}`}
       className={twJoin(
-        'group -mx-4 mb-4 flex flex-col',
-        'rounded-lg px-4 py-3 transition-all',
+        'group -mx-6 mb-4 flex flex-col rounded-lg px-6 py-3 transition-all',
+        'sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0',
         'hover:bg-zinc-100 focus:bg-zinc-100',
         'dark:hover:bg-zinc-800/50 dark:focus:bg-zinc-800/50',
         'outline-teal-500',
@@ -61,8 +61,8 @@ export default async function BlogHomePage() {
   const blogPosts = await listMetas();
   return (
     <div className="flex flex-col">
-      <div className="prose-max mt-4">
-        <p className="mx-4 mt-4 mb-6 border-b border-zinc-300 pb-6 text-center text-lg text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
+      <div className="prose-wrap mt-6">
+        <p className="mt-4 mb-6 border-b border-zinc-300 pb-6 text-center text-lg text-zinc-400 italic dark:border-zinc-600 dark:text-zinc-500">
           thoughts on code & life
         </p>
         {blogPosts.map((post) => (

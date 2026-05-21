@@ -14,7 +14,7 @@ export default async function AboutPage() {
           </svg>
         </h1>
         <Content />
-        <div className="prose-max mt-10 flex items-center gap-12">
+        <div className="prose-wrap mt-10 flex items-center gap-12">
           <Button href="/resume.pdf">
             download resume
             <Download className="size-4" />
