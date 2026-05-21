@@ -166,7 +166,7 @@ function Avatar() {
 
 export function Header({ links }: { links: { href: string; name: string }[] }) {
   const headerRef = useRef<React.ComponentRef<'div'>>(null);
-  const avatarRef = useRef<React.ComponentRef<'div'>>(null);
+  const innerRef = useRef<React.ComponentRef<'div'>>(null);
   const isInitial = useRef(true);
   // Show/hide/pin is driven by CSS variables on :root, updated in a scroll listener.
   // Invariants (breaking any of these has caused regressions before):
@@ -176,8 +176,11 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
   // - Do not add pin hysteresis that only releases at scrollY < downDelay — it
   //   breaks hide-on-scroll-down.
   // - Do not toggle layout classes with classList on scroll (Safari pin/unpin thrash).
+  // - Apply position: fixed to the full-width inner wrapper, not the centered
+  //   prose-wrap row. Fixing the row directly would require capturing its
+  //   left/width on every pin and re-capturing on resize.
   useEffect(() => {
-    const downDelay = avatarRef.current?.offsetTop ?? 0;
+    const downDelay = innerRef.current?.offsetTop ?? 0;
     const upDelay = 64;
 
     function setProperty(property: string, value: string) {
@@ -188,10 +191,8 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
       document.documentElement.style.removeProperty(property);
     }
 
-    function updateHeaderStyles() {
-      if (!headerRef.current) {
-        return;
-      }
+    function updateStyles() {
+      if (!headerRef.current) return;
 
       const { top, height } = headerRef.current.getBoundingClientRect();
       const scrollY = clamp(window.scrollY, 0, document.body.scrollHeight - window.innerHeight);
@@ -199,8 +200,6 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
       if (isInitial.current) {
         setProperty('--header-position', 'sticky');
       }
-
-      setProperty('--content-offset', `${downDelay}px`);
 
       if (isInitial.current || scrollY < downDelay) {
         setProperty('--header-height', `${downDelay + height}px`);
@@ -217,43 +216,11 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
       if (top === 0 && scrollY > 0 && scrollY >= downDelay) {
         setProperty('--header-inner-position', 'fixed');
         removeProperty('--header-top');
-        removeProperty('--avatar-top');
       } else {
         removeProperty('--header-inner-position');
-        setProperty('--header-top', '0px');
-        setProperty('--avatar-top', '0px');
+        removeProperty('--header-top');
       }
-    }
 
-    function updateAvatarStyles() {
-      if (downDelay <= 0) return;
-
-      const fromScale = 1;
-      const toScale = 36 / 64;
-      const fromX = 0;
-      const toX = 2 / 16;
-
-      const scrollY = downDelay - window.scrollY;
-
-      let scale = (scrollY * (fromScale - toScale)) / downDelay + toScale;
-      scale = clamp(scale, fromScale, toScale);
-
-      let x = (scrollY * (fromX - toX)) / downDelay + toX;
-      x = clamp(x, fromX, toX);
-
-      setProperty('--avatar-image-transform', `translate3d(${x}rem, 0, 0) scale(${scale})`);
-
-      const borderScale = 1 / (toScale / scale);
-      const borderX = (-toX + x) * borderScale;
-      const borderTransform = `translate3d(${borderX}rem, 0, 0) scale(${borderScale})`;
-
-      setProperty('--avatar-border-transform', borderTransform);
-      setProperty('--avatar-border-opacity', scale === toScale ? '1' : '0');
-    }
-
-    function updateStyles() {
-      updateHeaderStyles();
-      updateAvatarStyles();
       isInitial.current = false;
     }
 
@@ -268,41 +235,43 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
   }, []);
 
   return (
-    <>
-      <header
-        className="pointer-events-none relative z-50 flex flex-none flex-col"
-        style={{ height: 'var(--header-height)', marginBottom: 'var(--header-mb)' }}
+    <header
+      className="pointer-events-none relative z-50 flex flex-none flex-col"
+      style={{ height: 'var(--header-height)', marginBottom: 'var(--header-mb)' }}
+    >
+      <div
+        ref={headerRef}
+        className="top-0 z-10 h-16 pt-6"
+        style={{ position: 'var(--header-position)' as React.CSSProperties['position'] }}
       >
         <div
-          ref={headerRef}
-          className="top-0 z-10 h-16 pt-6"
-          style={{ position: 'var(--header-position)' as React.CSSProperties['position'] }}
+          ref={innerRef}
+          // inset-x-0 is ignored while static (in flow) and pins the wrapper to
+          // the viewport edges when fixed. Without it, position: fixed falls back
+          // to the parent's static-position left, which shifts the centered row
+          // off the card's centerline.
+          className="inset-x-0 z-50"
+          style={{
+            position: 'var(--header-inner-position, static)' as React.CSSProperties['position'],
+            top: 'var(--header-top, 1.5rem)',
+          }}
         >
-          <div
-            ref={avatarRef}
-            className={twJoin(
-              'header-inner',
-              'top-[var(--header-top,theme(spacing.6))] z-50 w-full',
-              'layout-7xl layout-px',
-            )}
-          >
-            <div className="prose-max relative flex gap-4">
-              <div className="flex flex-1">
-                <Avatar />
-              </div>
-              <div className="flex flex-1 justify-end md:justify-center">
-                <MobileNavigation links={links} />
-                <DesktopNavigation links={links} />
-              </div>
-              <div className="flex justify-end md:flex-1">
-                <div className="pointer-events-auto">
-                  <ThemeToggle />
-                </div>
+          <div className="prose-wrap relative flex min-w-0 gap-4">
+            <div className="flex flex-1">
+              <Avatar />
+            </div>
+            <div className="flex flex-1 justify-end md:justify-center">
+              <MobileNavigation links={links} />
+              <DesktopNavigation links={links} />
+            </div>
+            <div className="flex justify-end md:flex-1">
+              <div className="pointer-events-auto">
+                <ThemeToggle />
               </div>
             </div>
           </div>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 }

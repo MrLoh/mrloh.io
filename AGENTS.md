@@ -9,13 +9,14 @@ Next.js 16 App Router, React 19, Tailwind v4 (beta), MDX, shiki, `next-themes`, 
 - `app/layout.tsx`, `app/globals.css` — root shell + custom `prose` / layout classes
 - `app/blog/[slug]/page.tsx` renders `blog/*.mdx`; `app/about` and `app/colophon` render colocated `.mdx`
 - `mdx-components.tsx` — MDX element overrides (use plain Markdown in posts)
-- `components/Header.tsx` — scroll-driven; see comments in the file before editing
 
 ## Code style
 
 - Trust the formatter — Prettier handles quotes, width, import order, and Tailwind class order (incl. inside `twJoin` / `clsx` / `cn` / `twMerge`).
 - Group long `className` strings with `twJoin`, one logical group per line (layout / surface / hover+focus / dark). Short combinations stay plain strings.
 - Pair every color utility with a `dark:` counterpart.
+- Do not delete useful comments (invariants, regressions, non-obvious layout rules) unless they are wrong or the code they describe is gone.
+- Keep `AGENTS.md` for repo-wide conventions only. Do not add component-local implementation notes (pin logic, one-off regressions, etc.) — put those in comments next to the code.
 
 ## Layout shell
 

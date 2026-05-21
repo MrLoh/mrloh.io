@@ -36,11 +36,6 @@
   .layout-px {
     @apply px-6 sm:px-8 lg:px-16;
   }
-  .header-inner {
-    position: var(--header-inner-position, static);
-    inset-inline: 0;
-  }
-
   .prose > :where(p, h1, h2, h3, h4, h5, h6, blockquote, hr, figure, time) {
     @apply mx-auto block w-full max-w-[42rem] px-6 sm:px-8 lg:px-0;
     max-width: 42rem !important;
