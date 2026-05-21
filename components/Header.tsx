@@ -168,6 +168,14 @@ export function Header({ links }: { links: { href: string; name: string }[] }) {
   const headerRef = useRef<React.ComponentRef<'div'>>(null);
   const avatarRef = useRef<React.ComponentRef<'div'>>(null);
   const isInitial = useRef(true);
+  // Show/hide/pin is driven by CSS variables on :root, updated in a scroll listener.
+  // Invariants (breaking any of these has caused regressions before):
+  // - Keep a stable DOM. Do not pin with React state and conditional trees.
+  // - Pin when top === 0 && scrollY >= downDelay; unpin in the else branch
+  //   (including when top + height < -upDelay, so the bar can hide on scroll down).
+  // - Do not add pin hysteresis that only releases at scrollY < downDelay — it
+  //   breaks hide-on-scroll-down.
+  // - Do not toggle layout classes with classList on scroll (Safari pin/unpin thrash).
   useEffect(() => {
     const downDelay = avatarRef.current?.offsetTop ?? 0;
     const upDelay = 64;

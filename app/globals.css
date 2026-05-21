@@ -48,7 +48,11 @@
   .prose > :where(ul, ol) {
     @apply mx-auto block w-full max-w-[42rem] px-6 sm:px-8 lg:px-0;
     max-width: 42rem !important;
-    /* prose-px gutter + 1.5em marker column; li text-indent cancels the em term. */
+    /* Top-level lists need gutter + marker column in one place: prose-px gutter
+       plus a 1.5em marker column (li text-indent: -1.5em cancels the em term so
+       body text lines up with prose). Do not also put px-* on the list element —
+       this padding-inline-start: !important overrides the gutter and misaligns
+       markers vs body text. */
     padding-inline-start: calc(1.5em + theme(spacing.6)) !important;
   }
   @media (min-width: 640px) {
