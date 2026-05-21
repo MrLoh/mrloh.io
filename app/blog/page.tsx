@@ -19,8 +19,8 @@ function Post({
     <Link
       href={`/blog/${slug}`}
       className={twJoin(
-        'group -mx-6 mb-4 flex flex-col rounded-lg px-6 py-3 transition-all',
-        'sm:-mx-8 sm:px-8 lg:mx-0 lg:px-0',
+        'group -mx-6 mb-4 flex flex-col px-6 py-3 transition-all sm:rounded-lg',
+        'sm:-mx-4 sm:px-4',
         'hover:bg-zinc-100 focus:bg-zinc-100',
         'dark:hover:bg-zinc-800/50 dark:focus:bg-zinc-800/50',
         'outline-teal-500',
