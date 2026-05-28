@@ -4,13 +4,26 @@
   date: 2026-05-27
   linkedin: https://www.linkedin.com/in/andrew-tausz
   image: andrew.jpeg
-  quote: He is a voracious learner who rapidly turns curiosity into practical impact. Whether diving into a new ML architecture, improving system reliability, or refining developer workflows.
+  quote: He is a voracious learner who rapidly turns curiosity into impact, whether diving into a new ML architecture, improving system reliability, or refining developer workflows.
   text: |-
     I’ve had the pleasure of working closely with Tobias over the past several years, and he is one of the strongest and most well-rounded engineers I’ve worked with.
     Tobias is a Staff+ level software engineer with an exceptional breadth of technical expertise. He is equally comfortable working across frontend and backend systems, with deep experience in TypeScript, backend engineering, databases, and distributed systems. Beyond his strong engineering fundamentals, he has also developed impressive expertise in machine learning, highly proficient with PyTorch, embedding models, model training, and modern ML workflows.
     What stands out most about Tobias is his drive to learn. He is a genuinely voracious learner who constantly explores new technologies, approaches, and ideas, and he rapidly turns that curiosity into practical impact. Whether diving into a new ML architecture, improving system reliability, or refining developer workflows, Tobias consistently raises the bar for the teams around him.
     He is also a natural leader. Tobias leads through both technical excellence and collaboration - mentoring others, driving thoughtful architectural discussions, and helping teams make pragmatic, high-quality engineering decisions. His experience spans backend architecture, Docker, Kubernetes, CI/CD pipelines, and building and operating high-throughput, data-intensive applications at scale.
     Any team would be fortunate to have Tobias. He brings technical depth, adaptability, leadership, and a relentless growth mindset to everything he does.
+- name: Stephanie Habib
+  title: Lead Full-Stack Engineer
+  relationship: Directly reported to Tobias at Indigo & Orca
+  date: 2026-05-28
+  image: stephanie.jpeg
+  linkedin: https://www.linkedin.com/in/stephaniehabib
+  quote: He cares deeply about the end-user experience. The breadth of what he contributed, and the quality he maintained across all of it, was genuinely impressive.
+  text: |-
+    I've had the privilege of working with Tobias across two companies, experiencing him both as a manager and as a teammate, and he's excelled in both roles.
+    What sets Tobias apart from most engineers is his rare combination of deep technical rigor and a genuine eye for great UI. He doesn't just write clean, high-quality code. He cares deeply about the end-user experience, and that dual standard elevates everything he touches. At our last company, a machine learning startup, he was instrumental in building both the frontend applications and backend systems from the ground up, while also running experiments on ML models using the product itself. The breadth of what he contributed, and the quality he maintained across all of it, was genuinely impressive.
+    Beyond his technical abilities, Tobias is one of the strongest problem-solvers I've worked with. He approaches complex challenges with clarity and patience, thinking through edge cases and tradeoffs that others might overlook.
+    As a manager, he leads with the same high standards he holds for himself, raising the bar for a team without ever making it feel like pressure. He fosters an environment where quality is the default, not the exception.
+    Any team would be lucky to have Tobias. I'd work with him again without hesitation.
 - name: Stephen Thompson
   title: Senior Applied AI/ML Engineer & Manager
   relationship: Worked together with Tobias at Orca
@@ -161,7 +174,7 @@
   relationship: Worked together with Tobias at Tandem
   date: 2022-04-22
   linkedin: https://www.linkedin.com/in/priya328
-  quote: Tobias is a phenomenal leader who cares deeply and has an innate ability to gain acceptance on an idea simply through his passion and care about a particular topic.
+  quote: He's an excellent collaborator who drives meaningful change, with an innate ability to gain acceptance on an idea simply through his passion and care.
   text: Tobias is a phenomenal leader who cares deeply about delivering top quality products and doing the right thing. He's an excellent collaborator and drives meaningful changes within an organization to improve efficiency. He has an innate ability to gain acceptance on an idea simply through his passion and care about a particular topic.
   image: priya.jpeg
 # - name: Beau Randall
