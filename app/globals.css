@@ -129,4 +129,37 @@
     font-weight: var(--shiki-dark-font-weight, inherit) !important;
     text-decoration: var(--shiki-dark-text-decoration, inherit) !important;
   }
+
+  /* Coverflow on inner card only — snap item size stays fixed (no scroll flicker). */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .coverflow-item {
+        view-timeline-name: --cf;
+        view-timeline-axis: inline;
+        perspective: 1000px;
+        animation: coverflow-z linear both;
+        animation-timeline: --cf;
+      }
+      .coverflow-card {
+        animation: coverflow linear both;
+        animation-timeline: --cf;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+      }
+      @keyframes coverflow {
+        0% {
+          transform: rotateY(30deg) scale(0.94);
+          opacity: 0.6;
+        }
+        50% {
+          transform: rotateY(0deg) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: rotateY(-30deg) scale(0.94);
+          opacity: 0.6;
+        }
+      }
+    }
+  }
 }

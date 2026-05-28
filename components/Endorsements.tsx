@@ -9,6 +9,7 @@ import { twJoin } from 'tailwind-merge';
 import { LinkedIn } from '@/components/SocialIcons';
 
 const GAP_PX = 32;
+const SCROLL_END_DEBOUNCE_MS = 140;
 
 function slidesPerView(width: number) {
   if (width >= 1280) return 3;
@@ -28,28 +29,35 @@ function slideAt(container: HTMLDivElement, physicalIndex: number) {
   return container.children[physicalIndex + 1] as HTMLElement;
 }
 
+// Rect-based so it works regardless of the slide's offsetParent: the scroll
+// container is position:static, so slide.offsetLeft is NOT in the container's
+// scroll coordinate space. Deriving the target from the current scrollLeft plus
+// the visual gap to center keeps us exactly on the snap point (no snap-back).
 function centerScrollLeft(container: HTMLDivElement, slide: HTMLElement) {
-  return slide.offsetLeft - (container.clientWidth - slide.offsetWidth) / 2;
+  const containerRect = container.getBoundingClientRect();
+  const slideRect = slide.getBoundingClientRect();
+  const delta = slideRect.left - containerRect.left - (container.clientWidth - slide.offsetWidth) / 2;
+  return container.scrollLeft + delta;
 }
 
-function updateCoverflow(container: HTMLDivElement) {
-  const viewportCenter = container.scrollLeft + container.clientWidth / 2;
-  const falloff = Math.max(container.clientWidth * 0.5, 1);
+function closestPhysicalIndex(container: HTMLDivElement) {
+  const containerRect = container.getBoundingClientRect();
+  const viewportCenter = containerRect.left + container.clientWidth / 2;
+  let closestIndex = 0;
+  let closestDistance = Infinity;
 
   for (let i = 1; i < container.children.length - 1; i++) {
     const slide = container.children[i] as HTMLElement;
-    const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
-    const offset = slideCenter - viewportCenter;
-    const t = Math.min(1, Math.abs(offset) / falloff);
-
-    const scale = 1 - t * 0.06;
-    const rotateY = (offset / falloff) * 12;
-    const opacity = 1 - t * 0.28;
-
-    slide.style.transform = `perspective(1000px) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
-    slide.style.opacity = opacity.toFixed(3);
-    slide.style.zIndex = String(Math.round(100 - t * 50));
+    const slideRect = slide.getBoundingClientRect();
+    const slideCenter = slideRect.left + slide.offsetWidth / 2;
+    const distance = Math.abs(viewportCenter - slideCenter);
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestIndex = i - 1;
+    }
   }
+
+  return closestIndex;
 }
 
 export type Endorsement = {
@@ -229,18 +237,24 @@ function CarouselButton({
 
 export function Endorsements({ items }: { items: Endorsement[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const repositioningRef = useRef(false);
+  const navigatingRef = useRef(false);
+  const pendingScrollLeftRef = useRef<number | null>(null);
   const indexRef = useRef(0);
   const [index, setIndex] = useState(0);
   const [layout, setLayout] = useState({ slideWidth: 0, edgePad: 0, perView: 1 });
   const [openItem, setOpenItem] = useState<Endorsement | null>(null);
 
   const loop = items.length > 1;
-  const loopedItems: (Endorsement & { key: string })[] = loop
+  const loopedItems: (Endorsement & { key: string; copy: number; logicalIndex: number })[] = loop
     ? Array.from({ length: 3 }, (_, copy) =>
-        items.map((item) => ({ ...item, key: `${copy}-${item.linkedin}` })),
+        items.map((item, logicalIndex) => ({
+          ...item,
+          key: `${copy}-${item.linkedin}`,
+          copy,
+          logicalIndex,
+        })),
       ).flat()
-    : items.map((item) => ({ ...item, key: item.linkedin }));
+    : items.map((item, logicalIndex) => ({ ...item, key: item.linkedin, copy: 0, logicalIndex }));
 
   const updateLayout = useCallback(() => {
     const container = scrollRef.current;
@@ -248,147 +262,149 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
     setLayout(measureLayout(container));
   }, []);
 
-  const getScrollBehavior = useCallback((): ScrollBehavior => {
+  const targetScrollLeft = useCallback((physicalIndex: number) => {
+    const container = scrollRef.current;
+    if (!container) return 0;
+
+    const slide = slideAt(container, physicalIndex);
+    if (!slide) return 0;
+
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    return Math.max(0, Math.min(centerScrollLeft(container, slide), maxScroll));
+  }, []);
+
+  const scrollBehavior = useCallback((): ScrollBehavior => {
     const container = scrollRef.current;
     if (!container) return 'smooth';
     return slidesPerView(container.clientWidth) === 1 ? 'instant' : 'smooth';
   }, []);
 
-  const scrollToPhysical = useCallback((physicalIndex: number, behavior: ScrollBehavior) => {
+  const finishNavScroll = useCallback(() => {
     const container = scrollRef.current;
-    if (!container) return;
+    if (!container || !navigatingRef.current) return;
 
-    const slide = slideAt(container, physicalIndex);
-    if (!slide) return;
-
-    const maxScroll = container.scrollWidth - container.clientWidth;
-    const target = Math.max(0, Math.min(centerScrollLeft(container, slide), maxScroll));
-    container.scrollTo({ left: target, behavior });
+    const target = pendingScrollLeftRef.current;
+    container.style.scrollSnapType = '';
+    if (target !== null) container.scrollLeft = target;
+    navigatingRef.current = false;
+    pendingScrollLeftRef.current = null;
   }, []);
 
-  const closestPhysicalIndex = useCallback(() => {
+  const repositionLoop = useCallback(() => {
+    if (!loop || navigatingRef.current) return;
+
     const container = scrollRef.current;
-    if (!container || container.children.length < 3) return 0;
-
-    const viewportCenter = container.scrollLeft + container.clientWidth / 2;
-    let closestIndex = 0;
-    let closestDistance = Infinity;
-
-    for (let i = 1; i < container.children.length - 1; i++) {
-      const slide = container.children[i] as HTMLElement;
-      const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
-      const distance = Math.abs(viewportCenter - slideCenter);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestIndex = i - 1;
-      }
-    }
-
-    return closestIndex;
-  }, []);
-
-  const normalizeLoop = useCallback(() => {
-    if (!loop || repositioningRef.current) return;
+    if (!container || layout.slideWidth === 0) return;
 
     const n = items.length;
-    const physicalIndex = closestPhysicalIndex();
+    const cycleWidth = n * (layout.slideWidth + GAP_PX);
+    const physical = closestPhysicalIndex(container);
 
-    if (physicalIndex < n) {
-      repositioningRef.current = true;
-      scrollToPhysical(physicalIndex + n, 'instant');
-      requestAnimationFrame(() => {
-        repositioningRef.current = false;
-      });
-    } else if (physicalIndex >= 2 * n) {
-      repositioningRef.current = true;
-      scrollToPhysical(physicalIndex - n, 'instant');
-      requestAnimationFrame(() => {
-        repositioningRef.current = false;
-      });
+    if (physical < n) {
+      container.scrollLeft += cycleWidth;
+    } else if (physical >= 2 * n) {
+      container.scrollLeft -= cycleWidth;
     }
-  }, [closestPhysicalIndex, items.length, loop, scrollToPhysical]);
+  }, [items.length, layout.slideWidth, loop]);
 
-  const syncScroll = useCallback(() => {
-    const container = scrollRef.current;
-    if (container) updateCoverflow(container);
+  const scrollToLeft = useCallback(
+    (targetLeft: number, behavior: ScrollBehavior) => {
+      const container = scrollRef.current;
+      if (!container) return;
 
-    const physicalIndex = closestPhysicalIndex();
-    const logicalIndex = loop ? physicalIndex % items.length : physicalIndex;
-    indexRef.current = logicalIndex;
-    setIndex(logicalIndex);
-  }, [closestPhysicalIndex, items.length, loop]);
+      if (behavior === 'smooth') {
+        navigatingRef.current = true;
+        pendingScrollLeftRef.current = targetLeft;
+        container.style.scrollSnapType = 'none';
+        container.scrollTo({ left: targetLeft, behavior: 'smooth' });
+        return;
+      }
+
+      container.scrollTo({ left: targetLeft, behavior: 'instant' });
+      repositionLoop();
+    },
+    [repositionLoop],
+  );
+
+  const scrollToPhysical = useCallback(
+    (physicalIndex: number) => {
+      scrollToLeft(targetScrollLeft(physicalIndex), scrollBehavior());
+    },
+    [scrollBehavior, scrollToLeft, targetScrollLeft],
+  );
 
   const scrollTo = useCallback(
     (logicalIndex: number) => {
-      scrollToPhysical(
-        loop ? items.length + logicalIndex : logicalIndex,
-        getScrollBehavior(),
-      );
+      scrollToPhysical(loop ? items.length + logicalIndex : logicalIndex);
     },
-    [getScrollBehavior, items.length, loop, scrollToPhysical],
+    [items.length, loop, scrollToPhysical],
   );
 
   const scrollByCard = useCallback(
     (direction: -1 | 1) => {
-      scrollToPhysical(closestPhysicalIndex() + direction, getScrollBehavior());
-    },
-    [closestPhysicalIndex, getScrollBehavior, scrollToPhysical],
-  );
-
-  const settleScroll = useCallback(() => {
-    normalizeLoop();
-    requestAnimationFrame(() => {
-      if (repositioningRef.current) return;
       const container = scrollRef.current;
       if (!container) return;
-
-      const physical = closestPhysicalIndex();
-      const slide = slideAt(container, physical);
-      if (slide) {
-        const target = centerScrollLeft(container, slide);
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        const clamped = Math.max(0, Math.min(target, maxScroll));
-        if (Math.abs(container.scrollLeft - clamped) > 2) {
-          scrollToPhysical(physical, 'instant');
-        }
-      }
-
-      updateCoverflow(container);
-      syncScroll();
-    });
-  }, [closestPhysicalIndex, normalizeLoop, scrollToPhysical, syncScroll]);
+      scrollToPhysical(closestPhysicalIndex(container) + direction);
+    },
+    [scrollToPhysical],
+  );
 
   useLayoutEffect(() => {
     updateLayout();
-    const container = scrollRef.current;
-    if (container) updateCoverflow(container);
   }, [items.length, updateLayout]);
 
   useLayoutEffect(() => {
     if (layout.slideWidth === 0) return;
-    scrollToPhysical(loop ? items.length + indexRef.current : indexRef.current, 'instant');
-  }, [items.length, layout.slideWidth, layout.edgePad, loop, scrollToPhysical]);
+    const container = scrollRef.current;
+    if (!container) return;
+    container.scrollLeft = targetScrollLeft(
+      loop ? items.length + indexRef.current : indexRef.current,
+    );
+  }, [items.length, layout.slideWidth, layout.edgePad, loop, targetScrollLeft]);
 
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
-    syncScroll();
+    const slidesToObserve = loop
+      ? container.querySelectorAll<HTMLElement>('[data-carousel-copy="1"]')
+      : container.querySelectorAll<HTMLElement>('[data-carousel-slide]');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const centered = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!centered) return;
+
+        const logical = Number((centered.target as HTMLElement).dataset.logicalIndex);
+        if (Number.isNaN(logical)) return;
+
+        indexRef.current = logical;
+        setIndex(logical);
+      },
+      { root: container, rootMargin: '0px -50% 0px -50%', threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+
+    slidesToObserve.forEach((slide) => observer.observe(slide));
 
     let scrollEndTimer: ReturnType<typeof setTimeout>;
 
-    const onScroll = () => {
-      syncScroll();
-      clearTimeout(scrollEndTimer);
-      scrollEndTimer = setTimeout(settleScroll, 120);
-    };
-    container.addEventListener('scroll', onScroll, { passive: true });
-
     const onScrollEnd = () => {
       clearTimeout(scrollEndTimer);
-      settleScroll();
+      finishNavScroll();
+      repositionLoop();
     };
     container.addEventListener('scrollend', onScrollEnd);
+
+    const onScroll = () => {
+      clearTimeout(scrollEndTimer);
+      scrollEndTimer = setTimeout(() => {
+        finishNavScroll();
+        repositionLoop();
+      }, SCROLL_END_DEBOUNCE_MS);
+    };
+    container.addEventListener('scroll', onScroll, { passive: true });
 
     const onWheel = (e: WheelEvent) => {
       if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) return;
@@ -399,18 +415,23 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
 
     const resizeObserver = new ResizeObserver(() => {
       updateLayout();
-      requestAnimationFrame(settleScroll);
+      requestAnimationFrame(() => {
+        const c = scrollRef.current;
+        if (!c || measureLayout(c).slideWidth === 0) return;
+        c.scrollLeft = targetScrollLeft(loop ? items.length + indexRef.current : indexRef.current);
+      });
     });
     resizeObserver.observe(container);
 
     return () => {
       clearTimeout(scrollEndTimer);
+      observer.disconnect();
       container.removeEventListener('scroll', onScroll);
       container.removeEventListener('scrollend', onScrollEnd);
       container.removeEventListener('wheel', onWheel);
       resizeObserver.disconnect();
     };
-  }, [items.length, loop, scrollToPhysical, settleScroll, syncScroll, updateLayout]);
+  }, [finishNavScroll, items.length, loop, repositionLoop, targetScrollLeft, updateLayout]);
 
   if (items.length === 0) return null;
 
@@ -455,23 +476,24 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
         <div
           ref={scrollRef}
           className={twJoin(
-            'flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-auto sm:scroll-smooth',
+            'flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-auto',
             '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-            '[perspective:1000px]',
           )}
           style={{ gap: GAP_PX }}
         >
           <div aria-hidden className="shrink-0" style={{ width: layout.edgePad }} />
-          {loopedItems.map(({ key, ...item }) => (
+          {loopedItems.map(({ key, copy, logicalIndex, ...item }) => (
             <div
               key={key}
-              className={twJoin(
-                'flex shrink-0 origin-center snap-center snap-always will-change-transform',
-                '[backface-visibility:hidden] [transform-style:preserve-3d]',
-              )}
+              data-carousel-slide
+              data-carousel-copy={String(copy)}
+              data-logical-index={logicalIndex}
+              className={twJoin('coverflow-item flex shrink-0 snap-center snap-always')}
               style={{ width: layout.slideWidth > 0 ? layout.slideWidth : '100%' }}
             >
-              <EndorsementCard {...item} onReadMore={() => setOpenItem(item)} />
+              <div className="coverflow-card h-full w-full">
+                <EndorsementCard {...item} onReadMore={() => setOpenItem(item)} />
+              </div>
             </div>
           ))}
           <div aria-hidden className="shrink-0" style={{ width: layout.edgePad }} />
