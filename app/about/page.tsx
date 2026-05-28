@@ -1,9 +1,13 @@
 import { Download, Send } from 'lucide-react';
 
 import { Button } from '@/components/Button';
+import { Endorsements } from '@/components/Endorsements';
+
+import { getEndorsements } from './repo';
 
 export default async function AboutPage() {
   const { default: Content } = await import('./about.mdx');
+  const endorsements = await getEndorsements();
   return (
     <div className="flex flex-col">
       <article className="prose prose-zinc dark:prose-invert relative mt-6 w-full max-w-none">
@@ -25,6 +29,7 @@ export default async function AboutPage() {
           </Button>
         </div>
       </article>
+      <Endorsements items={endorsements} />
     </div>
   );
 }

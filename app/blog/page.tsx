@@ -21,7 +21,7 @@ function Post({
       className={twJoin(
         'group -mx-6 mb-4 flex flex-col px-6 py-3 transition-all sm:rounded-lg',
         'sm:-mx-4 sm:px-4',
-        'hover:bg-zinc-100 focus:bg-zinc-100',
+        'hover:bg-zinc-100/50 focus:bg-zinc-100/50',
         'dark:hover:bg-zinc-800/50 dark:focus:bg-zinc-800/50',
         'outline-teal-500',
       )}

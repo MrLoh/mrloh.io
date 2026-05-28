@@ -257,7 +257,7 @@ export default function Comments({ blueskyId }: { blueskyId?: string }) {
           </a>
         </span>
         <span className="mb-2 flex items-center text-right text-xs text-zinc-400 italic dark:text-zinc-600">
-          powered by bluesky{' '}
+          powered by bluesky
           <Bluesky className="mt-0.5 ml-2 size-3 text-zinc-300 dark:text-zinc-700" />
         </span>
       </div>
