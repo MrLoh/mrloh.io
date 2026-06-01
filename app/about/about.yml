@@ -40,12 +40,15 @@ experiences:
       - Python
       - TypeScript
       - React
+      - Transformers
       - PyTorch
       - Milvus
       - Pydantic AI
       - Next.js
       - Tailwind
       - PostgreSQL
+      - SQLite
+      - Redis
       - Docker
       - Kubernetes
       - OpenTelemetry
@@ -55,6 +58,14 @@ experiences:
       - GCP
       - SOC2
       - SSO & SCIM
+      - DDD
+      - Event Sourcing
+      - Playwright
+      - Scikit-Learn
+      - Numpy
+      - RAG
+      - REST APIs
+      - CUDA
 
   - company: Indigo Ag
     logo: indigoag.jpeg
@@ -80,6 +91,10 @@ experiences:
       - Docker
       - AWS
       - Terraform
+      - DDD
+      - Next.js
+      - a11y
+      - Cypress
 
   - company: Tandem Diabetes Care
     logo: tandem.jpeg
@@ -114,6 +129,9 @@ experiences:
       - Okta
       - REST APIs
       - GraphQL
+      - Web Workers
+      - Cypress
+      - i18n
 
   - company: Cinuru Research
     logo: cinuru.jpeg
@@ -147,6 +165,7 @@ experiences:
       - SVD
       - iOS
       - Android
+      - Next.js
 
   - company: Aaron AI
     logo: aaron.jpeg
