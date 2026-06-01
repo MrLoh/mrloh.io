@@ -36,7 +36,8 @@ function slideAt(container: HTMLDivElement, physicalIndex: number) {
 function centerScrollLeft(container: HTMLDivElement, slide: HTMLElement) {
   const containerRect = container.getBoundingClientRect();
   const slideRect = slide.getBoundingClientRect();
-  const delta = slideRect.left - containerRect.left - (container.clientWidth - slide.offsetWidth) / 2;
+  const delta =
+    slideRect.left - containerRect.left - (container.clientWidth - slide.offsetWidth) / 2;
   return container.scrollLeft + delta;
 }
 
@@ -91,11 +92,14 @@ function EndorsementCard({
       <blockquote
         className={twJoin('flex-1 text-sm leading-relaxed', 'text-zinc-700 dark:text-zinc-300')}
       >
-        {quote}
-        <MoveRight
-          type="button"
-          className="-mt-0.5 ml-0.5 inline-block size-4 cursor-pointer text-zinc-400 hover:text-teal-500"
-        />
+        {quote.slice(0, quote.lastIndexOf(' ') + 1)}
+        <span className="whitespace-nowrap">
+          {quote.slice(quote.lastIndexOf(' ') + 1)}
+          <MoveRight
+            type="button"
+            className="-mt-0.5 ml-0.5 inline-block size-4 cursor-pointer text-zinc-400 hover:text-teal-500"
+          />
+        </span>
       </blockquote>
       <a
         href={linkedin}
@@ -235,7 +239,13 @@ function CarouselButton({
   );
 }
 
-export function Endorsements({ items }: { items: Endorsement[] }) {
+export function Endorsements({
+  endorsements,
+  className,
+}: {
+  endorsements: Endorsement[];
+  className?: string;
+}) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const navigatingRef = useRef(false);
   const pendingScrollLeftRef = useRef<number | null>(null);
@@ -244,17 +254,22 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
   const [layout, setLayout] = useState({ slideWidth: 0, edgePad: 0, perView: 1 });
   const [openItem, setOpenItem] = useState<Endorsement | null>(null);
 
-  const loop = items.length > 1;
+  const loop = endorsements.length > 1;
   const loopedItems: (Endorsement & { key: string; copy: number; logicalIndex: number })[] = loop
     ? Array.from({ length: 3 }, (_, copy) =>
-        items.map((item, logicalIndex) => ({
+        endorsements.map((item, logicalIndex) => ({
           ...item,
           key: `${copy}-${item.linkedin}`,
           copy,
           logicalIndex,
         })),
       ).flat()
-    : items.map((item, logicalIndex) => ({ ...item, key: item.linkedin, copy: 0, logicalIndex }));
+    : endorsements.map((item, logicalIndex) => ({
+        ...item,
+        key: item.linkedin,
+        copy: 0,
+        logicalIndex,
+      }));
 
   const updateLayout = useCallback(() => {
     const container = scrollRef.current;
@@ -296,7 +311,7 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
     const container = scrollRef.current;
     if (!container || layout.slideWidth === 0) return;
 
-    const n = items.length;
+    const n = endorsements.length;
     const cycleWidth = n * (layout.slideWidth + GAP_PX);
     const physical = closestPhysicalIndex(container);
 
@@ -305,7 +320,7 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
     } else if (physical >= 2 * n) {
       container.scrollLeft -= cycleWidth;
     }
-  }, [items.length, layout.slideWidth, loop]);
+  }, [endorsements.length, layout.slideWidth, loop]);
 
   const scrollToLeft = useCallback(
     (targetLeft: number, behavior: ScrollBehavior) => {
@@ -335,9 +350,9 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
 
   const scrollTo = useCallback(
     (logicalIndex: number) => {
-      scrollToPhysical(loop ? items.length + logicalIndex : logicalIndex);
+      scrollToPhysical(loop ? endorsements.length + logicalIndex : logicalIndex);
     },
-    [items.length, loop, scrollToPhysical],
+    [endorsements.length, loop, scrollToPhysical],
   );
 
   const scrollByCard = useCallback(
@@ -351,16 +366,16 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
 
   useLayoutEffect(() => {
     updateLayout();
-  }, [items.length, updateLayout]);
+  }, [endorsements.length, updateLayout]);
 
   useLayoutEffect(() => {
     if (layout.slideWidth === 0) return;
     const container = scrollRef.current;
     if (!container) return;
     container.scrollLeft = targetScrollLeft(
-      loop ? items.length + indexRef.current : indexRef.current,
+      loop ? endorsements.length + indexRef.current : indexRef.current,
     );
-  }, [items.length, layout.slideWidth, layout.edgePad, loop, targetScrollLeft]);
+  }, [endorsements.length, layout.slideWidth, layout.edgePad, loop, targetScrollLeft]);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -418,7 +433,9 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
       requestAnimationFrame(() => {
         const c = scrollRef.current;
         if (!c || measureLayout(c).slideWidth === 0) return;
-        c.scrollLeft = targetScrollLeft(loop ? items.length + indexRef.current : indexRef.current);
+        c.scrollLeft = targetScrollLeft(
+          loop ? endorsements.length + indexRef.current : indexRef.current,
+        );
       });
     });
     resizeObserver.observe(container);
@@ -431,17 +448,17 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
       container.removeEventListener('wheel', onWheel);
       resizeObserver.disconnect();
     };
-  }, [finishNavScroll, items.length, loop, repositionLoop, targetScrollLeft, updateLayout]);
+  }, [finishNavScroll, endorsements.length, loop, repositionLoop, targetScrollLeft, updateLayout]);
 
-  if (items.length === 0) return null;
+  if (endorsements.length === 0) return null;
 
-  const showControls = items.length > 1;
+  const showControls = endorsements.length > 1;
 
   return (
-    <section aria-labelledby="endorsements-heading" className="mt-14 w-full">
+    <section aria-labelledby="endorsements-heading" className={className}>
       <div
         className={twJoin(
-          'prose-wrap mb-2',
+          'prose-wrap mb-3',
           'flex flex-wrap items-center justify-center gap-x-8 gap-y-2 min-[30rem]:justify-between',
         )}
       >
@@ -501,12 +518,12 @@ export function Endorsements({ items }: { items: Endorsement[] }) {
       </div>
 
       {showControls && (
-        <div className="mt-4 flex items-center justify-center gap-3">
+        <div className="mt-2 flex items-center justify-center gap-3">
           <CarouselButton label="Previous endorsement" onClick={() => scrollByCard(-1)}>
             <ChevronLeft className="size-5" />
           </CarouselButton>
           <div className="flex gap-2" role="tablist" aria-label="Endorsement slides">
-            {items.map((item, i) => (
+            {endorsements.map((item, i) => (
               <button
                 key={item.linkedin}
                 type="button"

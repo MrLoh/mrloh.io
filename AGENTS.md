@@ -1,5 +1,9 @@
 # Agent guidance (mrloh.io)
 
+## Behavior
+
+- **Questions are not change requests.** "Why…?", "What is this?", "What does X do?" — explain only. Do not edit files unless the user explicitly asks to fix, change, refactor, or implement something.
+
 ## Stack
 
 Next.js 16 App Router, React 19, Tailwind v4 (beta), MDX, shiki, `next-themes`, **pnpm**. No tests — verify with `pnpm typecheck` and `pnpm lint`; run `pnpm build` only when touching MDX, layout, or the build pipeline.
@@ -17,6 +21,7 @@ Next.js 16 App Router, React 19, Tailwind v4 (beta), MDX, shiki, `next-themes`, 
 - Pair every color utility with a `dark:` counterpart.
 - Do not delete useful comments (invariants, regressions, non-obvious layout rules) unless they are wrong or the code they describe is gone.
 - Keep `AGENTS.md` for repo-wide conventions only. Do not add component-local implementation notes (pin logic, one-off regressions, etc.) — put those in comments next to the code.
+- Do not extract trivial one-liners into helpers — inline the logic at the call site.
 
 ## Layout shell
 

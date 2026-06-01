@@ -1,7 +1,7 @@
 import 'server-only';
 
 import fs from 'fs/promises';
-import { Temporal } from '@js-temporal/polyfill';
+import { Temporal } from 'temporal-polyfill-lite';
 import { z } from 'zod';
 
 const blogPostFrontmatterSchema = z.object({

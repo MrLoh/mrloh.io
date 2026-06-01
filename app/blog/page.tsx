@@ -1,6 +1,6 @@
-import type { Temporal } from '@js-temporal/polyfill';
 import Link from 'next/link';
 import { twJoin } from 'tailwind-merge';
+import type { Temporal } from 'temporal-polyfill-lite';
 
 import { listMetas } from './repo';
 

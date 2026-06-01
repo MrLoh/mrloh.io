@@ -1,31 +1,33 @@
-import { Temporal } from '@js-temporal/polyfill';
+import '@formatjs/intl-durationformat/polyfill.js';
+
+import { Temporal } from 'temporal-polyfill-lite';
+
+export const formatDuration = (duration: Temporal.Duration) => {
+  return duration.toLocaleString('en-US', { style: 'long' }).replace(',', '');
+};
+
+export const formatYearMonth = (value: Temporal.PlainYearMonth | Temporal.PlainDate) =>
+  (value instanceof Temporal.PlainYearMonth ? value.toPlainDate({ day: 1 }) : value).toLocaleString(
+    'en-US',
+    { month: 'short', year: 'numeric' },
+  );
+
+export const formatDate = (date: Temporal.Instant) =>
+  date.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
 const relativeTimeFormatter = new Intl.RelativeTimeFormat('en-US', { numeric: 'auto' });
-
-const DateTimeDivisions = [
-  { amount: 60, name: 'seconds' as const },
-  { amount: 60, name: 'minutes' as const },
-  { amount: 24, name: 'hours' as const },
-  { amount: 7, name: 'days' as const },
-  { amount: 12, name: 'months' as const },
-  { amount: Number.POSITIVE_INFINITY, name: 'years' as const },
-];
-
-export const formatRelativeTimeAgo = (date: Date | string | Temporal.Instant): string => {
-  if (typeof date === 'string') {
-    date = Temporal.Instant.from(date);
-  } else if (date instanceof Date) {
-    date = Temporal.Instant.from(date.toISOString());
+export const formatRelativeTimeAgo = (date: Temporal.Instant): string => {
+  const seconds = Temporal.Now.instant().since(date).total('second');
+  for (const [unit, size] of [
+    ['year', 365 * 24 * 60 * 60],
+    ['month', 30 * 24 * 60 * 60],
+    ['day', 24 * 60 * 60],
+    ['hour', 60 * 60],
+    ['minute', 60],
+  ] as const) {
+    if (Math.abs(seconds) >= size) {
+      return relativeTimeFormatter.format(-Math.round(seconds / size), unit);
+    }
   }
-  let duration = date.epochSeconds - Temporal.Now.instant().epochSeconds;
-  let division = DateTimeDivisions[0]!; // Initialize with the smallest division
-  while (Math.abs(duration) >= division.amount) {
-    duration /= division.amount;
-    division = DateTimeDivisions[DateTimeDivisions.indexOf(division) + 1]!;
-  }
-  if (division.name === 'seconds') return 'moments ago';
-  if (division.name === 'months') {
-    return date.toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  }
-  return relativeTimeFormatter.format(Math.round(duration), division.name);
+  return 'moments ago';
 };

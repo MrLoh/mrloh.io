@@ -4,11 +4,12 @@ import { RichText } from '@atproto/api';
 import { Heart, MessageSquareText } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
+import { Temporal } from 'temporal-polyfill-lite';
 import { z } from 'zod/v4';
 
 import { Bluesky } from '@/components/SocialIcons';
 import { DOMAIN } from '@/config';
-import { formatRelativeTimeAgo } from '@/utils/formatting';
+import { formatDate, formatRelativeTimeAgo } from '@/utils/formatting';
 
 const postSchema = z.object({
   uri: z.string(),
@@ -18,7 +19,7 @@ const postSchema = z.object({
   record: z.object({
     text: z.string(),
     facets: z.array(z.any()).optional(),
-    createdAt: z.string(),
+    createdAt: z.string().transform((date) => Temporal.Instant.from(date)),
   }),
   author: z.object({
     did: z.string(),
@@ -83,10 +84,7 @@ const Comment = ({ post, replies }: { post: Post; replies: Replies }) => (
             {post.author.displayName}
           </strong>
         </a>
-        <time
-          title={new Date(post.record.createdAt).toLocaleString()}
-          className="mb-0.5 text-xs text-zinc-500"
-        >
+        <time title={formatDate(post.record.createdAt)} className="mb-0.5 text-xs text-zinc-500">
           {formatRelativeTimeAgo(post.record.createdAt)}
         </time>
       </div>

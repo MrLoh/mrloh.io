@@ -1,0 +1,459 @@
+location: Chicago, IL
+intro: |
+  I’ve been working as generalist software engineer for over 10 years, turning AI capabilities into production systems. I enjoy architecting pragmatic solutions, designing thoughtful user experiences, and enabling nimble teams to ship and maintain high-quality systems. My biggest passion is learning new things, which has lead me to often work at the intersection of teams and across the full stack of software from ML models and agentic AI systems to data intensive backend systems and web and mobile apps.
+
+personal: |
+  I’m originally from Berlin, have lived in Chile and Kenya, and now call Chicago home. When the laptop closes, you’ll find me mixing cocktails, cooking, exploring art, or chasing adventures with my two little daughters.
+
+  I've held positions on the boards of peace and social-justice organizations and churches since I was a teenager and co-founded a reforestation initiative in Kenya together with local youth.
+
+  I’m always happy to chat, swap ideas, or take on the occasional consulting project. Don't hesitate to get in touch!
+
+experiences:
+  - company: Orca DB
+    logo: orca.jpeg
+    linkedin: https://www.linkedin.com/company/orca-db
+    location: Remote
+    scopes: [ml, ai, backend, web, devops, management]
+    positions:
+      - title: Head of Engineering
+        start: '2025-09-22'
+      - title: Founding Engineer
+        start: '2023-09-18'
+        end: '2025-09-22'
+    summary: >
+      In my latest role, I helped build a startup that makes machine learning models more transparent. We built an MLOps platform for retrieval-augmented classification models that achieved millisecond inference and gives full traceability of predictions to the training data that drives them. This enabled new approaches to data-centric online learning and training data optimization. In the process I learned a lot about embedding models, data-intensive backend systems, and how to build reliable agentic AI features.
+    details:
+      - Led 5 engineers building an MLOps platform for retrieval-augmented classifiers with millisecond inference and data-centric online learning through memory updates.
+      - Engineered pipeline for GPU-optimized fine-tuning of embedding models with custom contrastive losses, distributed gradient caching, and automatic batch size tuning.
+      - Prototyped PyTorch harness for shaping embedding-space decision boundaries with 1000x faster feedback.
+      - Fine-tuned LLMs for embedding-guided synthetic data generation.
+      - Implemented Next.js app for statistical analysis, synthetic data generation, and visualization of model context usage, including an AI copilot that can take actions.
+      - Shipped enterprise-grade multi-tenant auth including SSO, SCIM, and audit logs.
+      - Drove SOC2 compliance, reducing overhead with CI for vulnerability mitigations and release tracking.
+      - Built agent-native SDLC platform with eval harness and a compounding skill library.
+      - Established on-call processes and full-stack observability with distributed OpenTelemetry tracing.
+      - Unified release pipeline for cloud GKE and on-prem deployments with E2E gates.
+      - Shipped Postgres-backed background job queue and zero-downtime data migrations.
+      - Designed Python SDK and docs to guide developers from quickstart to production.
+    skills:
+      - Python
+      - TypeScript
+      - React
+      - PyTorch
+      - Milvus
+      - Pydantic AI
+      - Next.js
+      - Tailwind
+      - PostgreSQL
+      - Docker
+      - Kubernetes
+      - OpenTelemetry
+      - FastAPI
+      - Vercel AI
+      - GitHub Actions
+      - GCP
+      - SOC2
+      - SSO & SCIM
+
+  - company: Indigo Ag
+    logo: indigoag.jpeg
+    linkedin: https://www.linkedin.com/company/indigoag/
+    location: Remote
+    scopes: [backend, web, management]
+    positions:
+      - title: Senior Engineering Manager
+        start: '2022-06-06'
+        end: '2023-07-27'
+    summary: >
+      I lead a team pairing satellite imagery with soil modeling to identify farmers with high potential for extending sustainable agricultural practices, helping grow enrollments in our carbon credit programs by 80%. Alongside the product work I spent a lot of energy coaching engineers and shaping architecture across a mature engineering organization.
+    details:
+      - Managed 2 Scrum teams with 7 engineers building tools that paired satellite imagery with soil modeling to target high-potential farmers, driving 80% growth in carbon credit enrollments.
+      - Coached 2 engineers to promotion by empowering them to lead projects and platform initiatives.
+      - Ran book clubs on system architecture and Domain-Driven Design that evolved architecture org-wide, and organized Event Storming workshops to evolve our monolithic backend into well-designed services.
+      - Led company-wide full-stack chapter, organized 80-person on-site, and improved on-call processes across 5 teams.
+    skills:
+      - Python
+      - TypeScript
+      - React
+      - PostgreSQL
+      - Docker
+      - AWS
+      - Terraform
+
+  - company: Tandem Diabetes Care
+    logo: tandem.jpeg
+    linkedin: https://www.linkedin.com/company/tandemdiabetes
+    location: Remote
+    scopes: [backend, web, app, management]
+    positions:
+      - title: Associate Director
+        start: '2021-02-01'
+        end: '2022-04-15'
+      - title: Principal Engineer/Manager
+        start: '2020-09-14'
+        end: '2021-02-01'
+    summary: >
+      I built out and managed a team of 20 engineers to launch a new diabetes management platform for 330k patients worldwide. In the process I had a chance to automate regulatory filings from our integration tests, establish new project management processes, and restructure the 60-person department into cross-functional teams.
+    details:
+      - Led project to launch a HIPAA and GDPR-compliant diabetes management platform for 330k patients and doctors worldwide.
+      - Scaled frontend team to 20 by hiring 3 managers, 1 architect, and 7 engineers, and restructured 60 contributors into agile cross-functional teams.
+      - Automated generation of regulatory IEC 62304 filings for Software as a Medical Device (SaMD) from Gherkin tests in CI.
+      - Helped evolve microservices towards Domain-Driven Design to handle millions of transactions per hour (Kubernetes, Service Bus).
+      - Developed a competency matrix and performance review system, rolling it out with 10 managers.
+      - Drove launch of new diabetes management platform to the finish line within 4 months by realigning stakeholders on an MVP and focusing on integration testing.
+      - Kickstarted a company-wide design system, aligning desktop, iOS, Android, and web clients with backend services via React Native and a GraphQL Gateway.
+    skills:
+      - TypeScript
+      - React
+      - React Native
+      - SaMD
+      - IEC 62304
+      - HIPAA
+      - GDPR
+      - Okta
+      - REST APIs
+      - GraphQL
+
+  - company: Cinuru Research
+    logo: cinuru.jpeg
+    linkedin: https://www.linkedin.com/company/cinuru
+    location: Potsdam, Germany & Remote
+    scopes: [ml, backend, web, app, management]
+    positions:
+      - title: Co-founder & CTO
+        start: '2016-10-19'
+        end: '2020-09-12'
+    summary: >
+      I co-founded a startup to make movie marketing more data-driven. We built white-label loyalty apps for a handful of German cinemas, including the largest chain, which grew to 200k monthly active users at a 4.7 App Store rating. Than we used the data to personalize marketing campaigns leading to real ROI for cinemas.
+    details:
+      - Co-founded and led engineering for a startup providing data-driven marketing through white-label cinema loyalty apps, serving 25+ independent cinemas and the largest German cinema chain. Raised $1M Series A.
+      - Headed implementation of a new app with 200k MAUs and 4.7 average App Store rating, integrating with existing authentication, CMS, and POS systems.
+      - Led implementation of React Native apps, web dashboards, Node.js GraphQL services, design system, and CI/CD pipelines (PostgreSQL, Redis, AWS Lambda).
+      - Oversaw Python movie recommendation engine that drove 20% ticket sales increases from personalized notifications.
+      - Hired and led a remote-first team of 4 engineers and championed Holacracy and OKRs to distribute authority.
+    skills:
+      - TypeScript
+      - Node.js
+      - React Native
+      - React
+      - Redis
+      - GraphQL
+      - PostgreSQL
+      - Expo
+      - AWS
+      - Serverless
+      - Python
+      - SVD
+      - iOS
+      - Android
+
+  - company: Aaron AI
+    logo: aaron.jpeg
+    linkedin: https://www.linkedin.com/company/aaron-ai
+    location: Berlin, Germany
+    scopes: [ml]
+    positions:
+      - title: Machine Learning Engineer
+        start: '2016-01-04'
+        end: '2016-09-30'
+    summary: >
+      Fresh out of college, I worked at a small ML startup, building an NLP call-routing system using TF-IDF, Word2Vec, and random forests.
+    skills:
+      - Python
+      - Scikit-Learn
+      - MongoDB
+
+  - company: Freelance
+    location: Berlin, Germany
+    scopes: [web]
+    positions:
+      - title: Web Developer & Designer
+        start: '2012-11-01'
+        end: '2015-01-31'
+    summary: >
+      I started my journey into software development by building websites and mobile apps for various clients.
+
+skills:
+  - id: ml
+    name: Machine Learning & AI
+    technologies:
+      - Transformers
+      - PyTorch
+      - Scikit Learn
+      - Numpy
+      - Pydantic AI
+      - Vercel AI
+      - Milvus
+      - RAG
+      - Agent Eval
+      - Finetuning
+      - CUDA
+
+  - id: backend
+    name: Backend & DevOps
+    technologies:
+      - Node.js
+      - Python
+      - REST
+      - GraphQL
+      - RPC
+      - WebSockets
+      - PostgreSQL
+      - SQLite
+      - Redis
+      - OpenTelemetry
+      - Docker
+      - Kubernetes
+      - Terraform
+      - Domain Driven Design
+      - Event Sourcing
+      - GitHub Actions
+      - Google Cloud Platform
+      - Serverless
+
+  - id: web
+    name: Web App Development
+    technologies:
+      - TypeScript
+      - React Native
+      - React
+      - Next.js
+      - Tailwind
+      - HTML Emails
+      - Playwright
+      - i18n
+      - a11y
+      - Auth & SSO
+      - Design Systems
+
+education:
+  summary: >
+    I studied physics, philosophy, and computer science writing one bachelor thesis in the area of quantum computing and the other one about the turing test. But then decided that academia was not for me and got into startup life.
+  institutions:
+    - name: Freie Universität Berlin
+      logo: fu-berlin.jpeg
+      url: https://www.fu-berlin.de
+      description: Gained my Bachelor of Arts in Philosophy & Computer Science from 2014 to 2015.
+    - name: Northwestern University
+      logo: northwestern.jpeg
+      url: https://www.northwestern.edu
+      description: Wrote my bachelor thesis on quantum computing at Northwestern in 2012.
+    - name: Universität Konstanz
+      logo: uni-konstanz.jpeg
+      url: https://www.uni-konstanz.de
+      description: Earned my Bachelor of Science in Physics from 2009 to 2012.
+    - name: Studienstiftung des Deutschen Volkes
+      logo: studienstiftung.jpeg
+      url: https://www.studienstiftung.de
+      description: All my studies were supported by a scholarship from Germany's largest and most selective academic foundation.
+    - name: Evangelisches Gymnasium zum Grauen Kloster
+      logo: graues-kloster.jpeg
+      url: https://www.graues-kloster.de
+      description: Attended humanist secondary school — Berlin's oldest gymnasium.
+
+openSource: |
+  I try to contribute to open source projects whenever I can, and open-sourced a few tools myself: a fully typed CSS in JS library for React Native, [a CLI for generating typed HTTPX clients from OpenAPI specs](/blog/2026-04-16-introducing-openapi-httpx) in Python, and a (still unreleased) event-sourcing framework for offline-first state synchronization.
+
+endorsements:
+  - name: Andrew Tausz
+    title: Stanford PhD & ML Engineering Leader
+    relationship: Worked together with Tobias at Orca
+    date: 2026-05-27
+    linkedin: https://www.linkedin.com/in/andrew-tausz
+    image: andrew.jpeg
+    quote: He is a voracious learner who rapidly turns curiosity into impact, whether diving into a new ML architecture, improving system reliability, or refining developer workflows.
+    text: |-
+      I’ve had the pleasure of working closely with Tobias over the past several years, and he is one of the strongest and most well-rounded engineers I’ve worked with.
+      Tobias is a Staff+ level software engineer with an exceptional breadth of technical expertise. He is equally comfortable working across frontend and backend systems, with deep experience in TypeScript, backend engineering, databases, and distributed systems. Beyond his strong engineering fundamentals, he has also developed impressive expertise in machine learning, highly proficient with PyTorch, embedding models, model training, and modern ML workflows.
+      What stands out most about Tobias is his drive to learn. He is a genuinely voracious learner who constantly explores new technologies, approaches, and ideas, and he rapidly turns that curiosity into practical impact. Whether diving into a new ML architecture, improving system reliability, or refining developer workflows, Tobias consistently raises the bar for the teams around him.
+      He is also a natural leader. Tobias leads through both technical excellence and collaboration - mentoring others, driving thoughtful architectural discussions, and helping teams make pragmatic, high-quality engineering decisions. His experience spans backend architecture, Docker, Kubernetes, CI/CD pipelines, and building and operating high-throughput, data-intensive applications at scale.
+      Any team would be fortunate to have Tobias. He brings technical depth, adaptability, leadership, and a relentless growth mindset to everything he does.
+  - name: Stephanie Habib
+    title: Lead Full-Stack Engineer
+    relationship: Directly reported to Tobias at Indigo & Orca
+    date: 2026-05-28
+    image: stephanie.jpeg
+    linkedin: https://www.linkedin.com/in/stephaniehabib
+    quote: He cares deeply about the end-user experience. The breadth of what he contributed, and the quality he maintained across all of it, was genuinely impressive.
+    text: |-
+      I've had the privilege of working with Tobias across two companies, experiencing him both as a manager and as a teammate, and he's excelled in both roles.
+      What sets Tobias apart from most engineers is his rare combination of deep technical rigor and a genuine eye for great UI. He doesn't just write clean, high-quality code. He cares deeply about the end-user experience, and that dual standard elevates everything he touches. At our last company, a machine learning startup, he was instrumental in building both the frontend applications and backend systems from the ground up, while also running experiments on ML models using the product itself. The breadth of what he contributed, and the quality he maintained across all of it, was genuinely impressive.
+      Beyond his technical abilities, Tobias is one of the strongest problem-solvers I've worked with. He approaches complex challenges with clarity and patience, thinking through edge cases and tradeoffs that others might overlook.
+      As a manager, he leads with the same high standards he holds for himself, raising the bar for a team without ever making it feel like pressure. He fosters an environment where quality is the default, not the exception.
+      Any team would be lucky to have Tobias. I'd work with him again without hesitation.
+  - name: Stephen Thompson
+    title: Senior Applied AI/ML Engineer & Manager
+    relationship: Worked together with Tobias at Orca
+    date: 2026-05-22
+    linkedin: https://www.linkedin.com/in/stephen-thompson-5413094
+    image: stephen-t.jpeg
+    quote: Tobias is one of the fastest engineers I have ever worked with. He has strong systems judgment, real machine learning depth, and clear focus on useful outcomes.
+    text: |-
+      I worked with Tobias at Orca, where we were both early members of the team and worked closely together across product, infrastructure, backend systems, and applied machine learning.
+      Tobias is one of the fastest engineers I have ever worked with. In the same week, he might clean up our CI/CD GitHub Actions, change backend database logic, add API endpoints, and simplify math in our PyTorch layers — all without dropping quality. The amount of system surface area he could keep in his head was genuinely impressive, and sometimes a little intimidating.
+      He also ramped up on machine learning very quickly. Within weeks, he was building new loss functions, debugging training issues, and contributing fixes back to SentenceTransformers. Later, he built an automated fine-tuning pipeline with turnkey hyperparameter sweeps, and developed a strong nose for what was going wrong in messy customer datasets.
+      Tobias has good judgment about where machine learning is actually useful. He cared about whether a model, pipeline, or automation solved a real customer problem. That showed up in his work using AI agents to automate initial dataset intake and in how he approached customer data: careful, pragmatic, and focused on whether the work actually helped.
+      I’d strongly recommend Tobias to any team looking for an unusually fast, broadly capable engineer with strong systems judgment, real machine learning depth, and a clear focus on useful outcomes.
+  # - name: Linna Li
+  #   title: Software Engineer, Real Estate Investor
+  #   company: Indigo
+  #   relationship: reported directly to Tobias
+  #   date: 2024-02-02
+  #   linkedin: https://www.linkedin.com/in/linnalihe
+  #   quote: Tobias has strong people management skills and brought a vibe of optimism to all our meetings. But in addition, he had strong technical leadership.
+  #   text: |-
+  #     I was a software engineer on his team during his time at Indigo and greatly benefitted from his leadership and technical guidance. He encouraged and pushed me to learn new architecture paradigms and supported my desire to work on impactful projects. He was always available to hash out difficult technical topics to unblock any work our team was stuck on.
+  #     Tobias has strong people management skills and brought a vibe of optimism to all our meetings. But in addition, he had strong technical leadership and was able to contribute to architecture design and even complete technical tickets when the deadline was tight.
+  #     I can't recommend Tobias enough as a engineering manager, an individual contributor, and general expert in software development.
+  #   image: linna.jpeg
+  # - name: Dillon Shook
+  #   title: Frontend leaning Full Stack Engineer | Autodidact & Zero One Infinity Advocate
+  #   company: Indigo
+  #   relationship: worked with Tobias on the same team
+  #   date: 2023-08-16
+  #   linkedin: https://www.linkedin.com/in/dillonshook
+  #   quote: Tobias really helped the team level up their skills and drove cohesion. He also was always a great help to figure out alternative solutions to problems.
+  #   text: |-
+  #     Tobias has a great technical background and leadership skills I benefited from while working together at Indigo. He took initiative on setting up recurring technical talks for engineers and lead ones on advanced error handling, server side rendering, and dove into how redux works under the hood. These really helped the team level up their skills and drove cohesion on patterns to use. He also was always a great help to bounce ideas off of and figure out alternative solutions to problems.
+  #     Overall Tobias was great to work with and big net positive for the organization
+  #   image: dillon.jpeg
+  # - name: Akshay Arora
+  #   title: Engineering @ Astronomer | Advisor and Investor
+  #   company: Indigo
+  #   relationship: managed Tobias directly
+  #   date: 2023-08-11
+  #   linkedin: https://www.linkedin.com/in/akshay-arora-in-nyc
+  #   quote: Tobias is very knowledgeable about architecture and loves to think how the architecture can better serve the business.
+  #   text: |-
+  #     I had the opportunity to work with Tobias while we were at Indigo together. He reported up to me and managed a team of full-stack engineers as well as some contractors in LATAM. Tobias is very knowledgeable about front-end technology and architecture and loves to think how the architecture can better serve the business (a very important skill compare to just knowing about architecture alone).
+  #     It was a pleasure to work with Tobias. If you have the need for a strong technical leader, with deep front-end expertise, look no further!
+  #   image: akshay.jpeg
+  # - name: Rebecca Herron
+  #   title: Software Engineering Manager @ Mapbox | Geospatial Data Pipelines and Applications
+  #   company: Indigo
+  #   relationship: worked with Tobias on the same team
+  #   date: 2023-08-11
+  #   linkedin: https://www.linkedin.com/in/herronrebecca
+  #   quote: He championed several smart and forward thinking initiatives and created a culture that challenged senior engineers to wear business hats.
+  #   text: Tobias was a very supportive coworker and manager to his team. While I worked with Tobias, he championed several smart and forward thinking UI initiatives, created a culture that challenged senior engineers to wear business hats, ran a book club, and created tons of connections across the organization. Tobias is a great UI leader.
+  #   image: rebecca.jpeg
+  - name: Rui Paulo Ruhrländer
+    title: Co-Founder Software & Data Science
+    relationship: Worked together with Tobias at Cinuru
+    date: 2022-05-13
+    linkedin: https://www.linkedin.com/in/ruipaulo
+    quote: He truly is the most efficient developer I have ever met. He understands the technologies he works with very deeply and develops solutions that really solve problems.
+    text: |-
+      Tobias is an exceptional developer and profound thinker. He truly is the most efficient developer I have ever met. He understands the technologies he works with very deeply and develops solutions that really solve problems.
+      Besides his great development skills, he is very efficient in improving organizational structures and establishing processes.
+      Tobias is a great Lead Developer that understands how to train people and pass on his knowledge to team members.
+      Together we developed an app ecosystem that powers some of the largest cinemas/chains in Germany (+500k MAU) with React Native, GraphQL, Typescript, Styled (Native) Components, CI/CD with a AWS (Lambda, SES, RDS, Node.js, Postgresql) Backend.
+    image: paulo.jpeg
+  # - name: Manuel Jaime
+  #   title: Digital Innovator & Technologist | Advisor & Board Member | MIT, Qualcomm, McKinsey Alum
+  #   company: Cinuru
+  #   relationship: managed Tobias directly
+  #   date: 2022-05-06
+  #   linkedin: https://www.linkedin.com/in/manueljaime
+  #   quote: He has deep technical knowledge coupled with great insights of process and architecture that guide his approach to design and development.
+  #   text: Tobias is a top notch developer and engineer lead. He has deep technical knowledge and strong leadership skills. This is coupled with great insights of process and architecture that guide his approach to design and development.
+  #   image: manuel.jpeg
+  - name: Jossay Jacobo
+    title: Senior Leader in Engineering & Quality
+    relationship: Worked together with Tobias at Tandem
+    date: 2022-05-04
+    linkedin: https://www.linkedin.com/in/jossjacobo
+    quote: He possessed incredibly technical depth, focus, and an amazing ability to breakdown incredibly vague and complex problems into cogent actionable next steps.
+    text: |-
+      The short time Tobias and I worked together was incredible, from the beginning I knew it he possessed incredibly technical depth, focus, and an amazing ability to breakdown incredibly vague and complex problems into cogent actionable next steps.
+      Tobias led the effort to create teams and spaces that promoted a growth mindset and a culture of trust and collaboration, as well as providing a clear technical vision for the Digital Health organization. One of most impressive qualities I saw in Tobias was his ability to create a shared understanding across many functional teams. I cannot understate enough how important this was to getting everyone on the same page and making progress. As a leader, Tobias was incredibly transparent with his team and proved to be able to lead with integrity and compassion.
+      It was a true pleassure to work alongside Tobias for the last year and I believe he would make an amazing asset to any leadership or technical position, he has my unreserved recommendation.
+    image: jossay.jpeg
+  - name: Amanda Mendoza, CSM
+    title: Senior Scrum Master & Manager
+    relationship: Worked together with Tobias at Tandem
+    date: 2022-04-26
+    linkedin: https://www.linkedin.com/in/amanda-mendoza-csm-081020b0
+    quote: He truly cares about the people he works with. I could always count on Tobias to do what he says he will do, nothing ever falls between the cracks with him.
+    text: |-
+      Tobias is a great leader that would be an asset to any organization. He has an unwavering drive to always be better than yesterday. 
+      He truly cares about the people he works with and he understands that the most effective teams consist of fulfilled and happy employees. While at Tandem in his leadership role he championed a number of initiatives including an extensive rubric for employee reviews, a new tool for product roadmapping and epic planning, a number of squad personnel changes to more effectively deliver business value and he lead a large project of 5 scrum teams as tech lead. 
+      I could always count on Tobias to do what he says he will do, nothing ever falls between the cracks with him. Tobias was a pleasure to work and he was always very supportive of me and my role as scrum master. I will miss partnering with him on initiatives to build stronger teams who can more effectively deliver value to our customers.
+    image: amanda.jpeg
+  - name: Larkin Lowrey
+    title: Senior Director & Consultant
+    relationship: Directly managed Tobias at Tandem
+    date: 2022-04-25
+    linkedin: https://www.linkedin.com/in/larkinlowrey
+    quote: Tobias is more than an engineering leader, he is a business leader who will optimize and deliver value not just within engineering but across all facets of the organization.
+    text: |-
+      Tobias is one of the most driven and focused engineering leaders I have had the privilege to work with. He empowers his teams to make decisions independently while providing them the guidance and mentorship to ensure that they are acting in the best interests of the customer, the firm and the team. He is a true force multiplier and is able to help is teams reach their fullest potential. 
+      Tobias is more than an engineering leader, he is a business leader who will optimize and deliver value not just within engineering but across all facets of the organization.
+    image: larkin.jpeg
+  # - name: Jerome Dane
+  #   title: Senior Director of Engineering @ Gen Digital
+  #   company: Tandem Diabetes Care
+  #   relationship: reported directly to Tobias
+  #   date: 2022-04-25
+  #   linkedin: https://www.linkedin.com/in/jeromedane
+  #   quote: Tobias gave me some of the best feedback to help focus my time, energy, and approach in the face of many competing priorities.
+  #   text: Tobias is incredibly sharp. I thoroughly enjoyed our technical and organizational chats as we worked together to advance the Digital Health needs of our company. Our discussions were always passionate and respectful leading to mutual growth. Tobias cares deeply, and gave me some of the best feedback I have received as a manager to help focus my time, energy, and approach in the face of many competing priorities. Tobias also takes feedback incredibly well, carefully evolving his own approach to better meet the needs of his teams and the organization at large.
+  #   image: jerome.jpeg
+  # - name: Evan Chamberlain
+  #   title: Senior Software Engineer at Tandem Diabetes Care
+  #   company: Tandem Diabetes Care
+  #   relationship: Tobias was senior to Evan but did not manage Evan directly
+  #   date: 2022-04-22
+  #   linkedin: https://www.linkedin.com/in/evan-chamberlain-78369a94
+  #   quote: His Typescript skills in particular always impressed me. His understanding of React Native as well as GraphQL were critical for our project.
+  #   text: I had the pleasure of working with Tobias for about two years, of which about half of that time he was my manager and the team lead of the project we were working on. From a management standpoint, he was a really great coach and mentor to me. From a technical standpoint, his Typescript skills in particular always impressed me and he helped me get through some particularly nasty typings problems at times thanks to that. His understanding of React/React Native as well as GraphQL were critical for our project as well. Tobias would be an asset to any team.
+  #   image: evan.jpeg
+  # - name: Xavier de Anda
+  #   title: Product Management and Technology Innovation Leader
+  #   company: Tandem Diabetes Care
+  #   relationship: worked with Tobias on the same team
+  #   date: 2022-04-22
+  #   linkedin: https://www.linkedin.com/in/xavier-deanda
+  #   quote: Tobias was instrumental in building the team as well as driving the adoption of innovative productivity tools and processes.
+  #   text: I had the distinct pleasure of working with Tobias at Tandem Diabetes Care, where his leadership brought together a 50+ person team in the architecting, planning, and development of a multinational, secure, web based diabetes data management system for people living with diabetes and their healthcare providers. Tobias was instrumental in building the team as well as driving the adoption of innovative productivity tools and processes, monitoring technical execution, ensuring communication within and outside the core team, and keeping senior leadership informed of our progress. I look forward to seeing Tobias continue to grow and tackle projects that as Tandem has done for many years, will leverage people and technology to change the world.
+  #   image: xavier.jpeg
+  # - name: Catherine Flores, DTR, PSM
+  #   title: Senior Scrum Master at Tandem Diabetes Care
+  #   company: Tandem Diabetes Care
+  #   relationship: reported directly to Tobias
+  #   date: 2022-04-22
+  #   linkedin: https://www.linkedin.com/in/catherine-flores-dtr-psm-573937b4
+  #   quote: He took the ~50 member department and sorted them into functional squads that delivered value to customers.
+  #   text: Tobias is a pleasure to work with. He cares deeply for his team and their success. While working with him at Tandem, I observed him drive the initiative of getting quality cross functional teams set up. He took the ~50 member department and sorted them into functional squads that delivered value to customers. During this process, he had to rely heavily on his people skills. He has various conversations with cross functional managers to ensure our personal was set up for success. This resulted in us delivering work in a more organized and efficient fashion.
+  #   image: catherine.jpeg
+  - name: Priya Singh
+    title: System Engineer & Product Manager
+    relationship: Worked together with Tobias at Tandem
+    date: 2022-04-22
+    linkedin: https://www.linkedin.com/in/priya328
+    quote: He's an excellent collaborator who drives meaningful change, with an innate ability to gain acceptance on an idea simply through his passion and care.
+    text: Tobias is a phenomenal leader who cares deeply about delivering top quality products and doing the right thing. He's an excellent collaborator and drives meaningful changes within an organization to improve efficiency. He has an innate ability to gain acceptance on an idea simply through his passion and care about a particular topic.
+    image: priya.jpeg
+  # - name: Beau Randall
+  #   title: Principal Software Engineer at Tandem Diabetes Care
+  #   company: Tandem Diabetes Care
+  #   relationship: reported directly to Tobias
+  #   linkedin: https://www.linkedin.com/in/beaurandall
+  #   date: 2022-04-22
+  #   quote: Tobias possesses a rare combination of empathetic leadership and strong technical acumen.
+  #   text: |-
+  #     Tobias was my supervisor for 1.5 years... he possesses a rare combination of empathetic leadership and strong technical acumen. Even as a director, he found time to assist in architectural direction and even directly code several foundational elements of our codebase.
+  #     As a leader, he helped build-out a small team to a larger tribe spanning several cross-functional teams w/ 20+ hires. Always eager to take and give useful feedback, Tobias established a culture of positivity and openness with an eye on a healthy WLB - certainly the key ingredient for what I'd say is one of the most functional departments I've worked for in my 20+ years as an engineer. Any company would be lucky to have him.
+  #   image: beau.jpeg
+  - name: Matt Polichette
+    title: Software Engineering Leader
+    relationship: Directly reported to Tobias at Tandem
+    date: 2022-04-22
+    linkedin: https://www.linkedin.com/in/matt-polichette-97821347
+    quote: Tobias was an amazing mentor and leader for me. He excels in tackling tricky problems and developing systems for organizing information and processes for handling them.
+    text: |-
+      Tobias was an amazing mentor and leader for me in the time I reported to him at Tandem. He's a strong decision maker and a guiding light. He excels in tackling tricky problems and developing systems for organizing information and processes for handling them. A number of improvements while I was there can be tied directly to him. He came into a struggling project and quickly identified and started straightening out both roadmap issues and team structure issues. He spearheaded an initiative to move into cross-functional teams which significantly improved our ability to accomplish our goals.
+      The strongest recommendation I can give for Tobias was his care for his reports. He focused a lot on creating a strong culture and building up the engineers. He helped establish a structured career path which provides personalized guidance for all of the engineers in the department.
+      Finally, Tobias gave me the highest quality annual review I've ever received. It included both broadly collected feedback and direct suggestions for improvements on my career generally, not just at Tandem. I think it really reflects his care and dedication to his team.
+    image: matt.jpeg
