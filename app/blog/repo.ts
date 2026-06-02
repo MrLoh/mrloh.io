@@ -18,7 +18,7 @@ type BlogPostMeta = z.infer<typeof blogPostFrontmatterSchema> & { slug: string }
 
 export async function listSlugs(): Promise<string[]> {
   const files = await fs.readdir('./blog');
-  return files.map((file) => file.replace('.mdx', ''));
+  return files.filter((file) => file.endsWith('.mdx')).map((file) => file.replace(/\.mdx$/, ''));
 }
 
 export async function getMeta(slug: string): Promise<BlogPostMeta> {
@@ -28,7 +28,7 @@ export async function getMeta(slug: string): Promise<BlogPostMeta> {
 }
 
 export async function listMetas(): Promise<BlogPostMeta[]> {
-  const files = await fs.readdir('./blog');
-  const metas = await Promise.all(files.map(async (file) => getMeta(file.replace('.mdx', ''))));
+  const slugs = await listSlugs();
+  const metas = await Promise.all(slugs.map(getMeta));
   return metas.sort((a, b) => Temporal.PlainDate.compare(b.date, a.date));
 }

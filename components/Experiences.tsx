@@ -1,6 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { BriefcaseBusiness, ChevronDown } from 'lucide-react';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { twJoin } from 'tailwind-merge';
 import { Temporal } from 'temporal-polyfill-lite';
 
@@ -8,7 +8,7 @@ import { formatDuration, formatYearMonth } from '@/utils/formatting';
 
 type Experience = {
   company: string;
-  logo?: string;
+  logo?: StaticImageData;
   linkedin?: string;
   location: string;
   positions: { title: string; start: Temporal.PlainDate; end?: Temporal.PlainDate }[];
@@ -51,7 +51,7 @@ const CompanyLogo = ({
   linkedin,
 }: {
   name: string;
-  logo?: string;
+  logo?: StaticImageData;
   linkedin?: string;
 }) => {
   const sharedClassName = twJoin(
@@ -59,13 +59,7 @@ const CompanyLogo = ({
     'ring-2 ring-zinc-200 dark:ring-zinc-600',
   );
   const inner = logo ? (
-    <Image
-      src={logo}
-      alt=""
-      width={40}
-      height={40}
-      className={twJoin(sharedClassName, 'object-contain')}
-    />
+    <Image src={logo} alt={name} className={twJoin(sharedClassName, 'object-contain')} />
   ) : (
     <div className={twJoin(sharedClassName, 'bg-zinc-200 dark:bg-zinc-600')} aria-hidden>
       <BriefcaseBusiness className="size-5 text-zinc-600 dark:text-zinc-300" />

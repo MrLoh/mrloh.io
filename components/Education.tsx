@@ -1,11 +1,11 @@
 'use client';
 
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import Image from 'next/image';
+import { Popover, PopoverButton, PopoverGroup, PopoverPanel } from '@headlessui/react';
+import Image, { type StaticImageData } from 'next/image';
 import { useRef } from 'react';
 import { twJoin } from 'tailwind-merge';
 
-type Institution = { name: string; logo: string; url: string; description: string };
+type Institution = { name: string; logo: StaticImageData; url: string; description: string };
 
 function InstitutionPopover({ name, logo, url, description }: Institution) {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -36,13 +36,7 @@ function InstitutionPopover({ name, logo, url, description }: Institution) {
                 'bg-white transition outline-none hover:scale-120 data-[open]:scale-120 dark:bg-zinc-300',
               )}
             >
-              <Image
-                src={logo}
-                alt=""
-                width={40}
-                height={40}
-                className="size-full object-contain"
-              />
+              <Image src={logo} alt={name} className="size-full object-contain" />
             </PopoverButton>
             <PopoverPanel
               anchor={{ to: 'top', gap: 8 }}
@@ -94,11 +88,11 @@ export function Education({
         <h2 className="text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
           Education
         </h2>
-        <div className="-mt-2 mr-2 flex max-w-80 flex-1 items-center justify-between">
+        <PopoverGroup className="-mt-2 mr-2 flex max-w-80 flex-1 items-center justify-between">
           {institutions.map((institution) => (
             <InstitutionPopover key={institution.url} {...institution} />
           ))}
-        </div>
+        </PopoverGroup>
       </div>
       <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">{summary.trim()}</p>
     </section>

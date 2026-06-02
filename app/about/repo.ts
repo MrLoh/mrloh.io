@@ -2,6 +2,7 @@ import 'server-only';
 
 import fs from 'node:fs';
 import path from 'node:path';
+import type { StaticImageData } from 'next/image';
 import { Temporal } from 'temporal-polyfill-lite';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
@@ -57,6 +58,11 @@ const educationSchema = z.object({
     .min(1),
 });
 
+const importImage = async (path: string) => {
+  const { default: image } = await import(`./resources/${path}`);
+  return image as StaticImageData;
+};
+
 export async function getContent() {
   const file = path.join(process.cwd(), 'app/about/about.yml');
   const { location, intro, personal, experiences, skills, education, openSource, endorsements } = z
@@ -91,7 +97,7 @@ export async function getContent() {
     experiences: await Promise.all(
       experiences.map(async ({ logo, ...rest }) => ({
         ...rest,
-        logo: logo ? ((await import(`./resources/${logo}`)).default.src as string) : undefined,
+        logo: logo ? await importImage(logo) : undefined,
       })),
     ),
     skills: skills.map((skill) => ({ ...skill, duration: skillYears[skill.id]! })),
@@ -100,7 +106,7 @@ export async function getContent() {
       institutions: await Promise.all(
         education.institutions.map(async ({ logo, ...rest }) => ({
           ...rest,
-          logo: (await import(`./resources/${logo}`)).default.src as string,
+          logo: await importImage(logo),
         })),
       ),
     },
@@ -108,7 +114,7 @@ export async function getContent() {
     endorsements: await Promise.all(
       endorsements.map(async ({ image, ...rest }) => ({
         ...rest,
-        image: (await import(`./resources/${image}`)).default.src as string,
+        image: await importImage(image),
       })),
     ),
   };

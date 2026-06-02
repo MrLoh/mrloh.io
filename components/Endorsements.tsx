@@ -2,7 +2,7 @@
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ChevronLeft, ChevronRight, MoveRight, X } from 'lucide-react';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
@@ -66,7 +66,7 @@ export type Endorsement = {
   title: string;
   relationship: string;
   quote: string;
-  image: string;
+  image: StaticImageData;
   linkedin: string;
   text: string;
 };
@@ -110,8 +110,6 @@ function EndorsementCard({
         <Image
           src={image}
           alt={name}
-          width={48}
-          height={48}
           className={twJoin(
             'mr-2 -ml-1 size-9 shrink-0 rounded-full object-cover',
             'ring-2 ring-zinc-100 transition dark:ring-zinc-700',
@@ -176,9 +174,7 @@ function EndorsementModal({
             <div className="flex items-center gap-3 pr-8">
               <Image
                 src={endorsement.image}
-                alt=""
-                width={48}
-                height={48}
+                alt={endorsement.name}
                 className={twJoin(
                   'size-12 shrink-0 rounded-full object-cover',
                   'ring-2 ring-zinc-100 dark:ring-zinc-700',
