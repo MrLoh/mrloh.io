@@ -17,11 +17,12 @@ Next.js 16 App Router, React 19, Tailwind v4 (beta), MDX, shiki, `next-themes`, 
 ## Code style
 
 - Trust the formatter — Prettier handles quotes, width, import order, and Tailwind class order (incl. inside `twJoin` / `clsx` / `cn` / `twMerge`).
-- Group long `className` strings with `twJoin`, one logical group per line (layout / surface / hover+focus / dark). Short combinations stay plain strings.
+- Group long `className` strings with `twJoin`, one logical group per line (layout / surface / hover+focus / dark). Short combinations stay plain strings. Do not them into constant used once — inline it on the element.
 - Pair every color utility with a `dark:` counterpart.
 - Do not delete useful comments (invariants, regressions, non-obvious layout rules) unless they are wrong or the code they describe is gone.
 - Keep `AGENTS.md` for repo-wide conventions only. Do not add component-local implementation notes (pin logic, one-off regressions, etc.) — put those in comments next to the code.
 - Do not extract trivial one-liners into helpers — inline the logic at the call site.
+- Keep small, single-file subcomponents colocated in the same module. Do not add a new file for helpers or typography used only by one parent component.
 
 ## Layout shell
 

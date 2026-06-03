@@ -6,7 +6,7 @@ const nextConfig: NextConfig = { pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts'
 const withMDX = createMDX({
   options: {
     remarkPlugins: [['remark-gfm'], ['remark-frontmatter'], ['remark-mdx-frontmatter']],
-    rehypePlugins: [],
+    rehypePlugins: [['rehype-slug']],
   },
 });
 

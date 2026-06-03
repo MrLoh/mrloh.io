@@ -272,7 +272,7 @@ education:
       description: Attended humanist secondary school — Berlin's oldest gymnasium.
 
 openSource: |
-  I try to contribute to open source projects whenever I can, and open-sourced a few tools myself: a fully typed CSS in JS library for React Native, [a CLI for generating typed HTTPX clients from OpenAPI specs](/blog/2026-04-16-introducing-openapi-httpx) in Python, and a (still unreleased) event-sourcing framework for offline-first state synchronization.
+  I'm a big believer in open source, and contribute fixes and improvements back to libraries when I can, like a recent [fix for a batch-sampling regression in SentenceTransformers](/blog/2026-05-19-embedding-finetuning#fixing-sentencetransformers-group-by-label-batch-sampler). I've also open-sourced a few tools myself: a fully typed CSS in JS library for React Native, [a CLI for generating typed HTTPX clients from OpenAPI specs](/blog/2026-04-16-introducing-openapi-httpx) in Python, and a (still unreleased) event-sourcing framework for offline-first state synchronization.
 
 endorsements:
   - name: Andrew Tausz

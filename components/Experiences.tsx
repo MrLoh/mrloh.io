@@ -45,42 +45,63 @@ const DateRange = ({
   </span>
 );
 
-const CompanyLogo = ({
-  name,
-  logo,
-  linkedin,
+const CompanyNameLink = ({ href, children }: { href: string; children: string }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={twJoin(
+      'rounded-sm outline-teal-500 transition',
+      'hover:text-teal-500 dark:hover:text-teal-400',
+      'focus-visible:text-teal-500 dark:focus-visible:text-teal-400',
+    )}
+  >
+    {children}
+  </a>
+);
+
+const CompanyName = ({
+  children,
+  href,
+  as: Tag,
 }: {
-  name: string;
-  logo?: StaticImageData;
-  linkedin?: string;
+  children: string;
+  href?: string;
+  as: 'h3' | 'span';
 }) => {
-  const sharedClassName = twJoin(
+  const label = href ? <CompanyNameLink href={href}>{children}</CompanyNameLink> : children;
+
+  return (
+    <Tag
+      className={twJoin(
+        'font-semibold text-zinc-700 dark:text-zinc-300',
+        Tag === 'h3' && 'text-base',
+        href && '[&_a]:text-inherit',
+      )}
+    >
+      {label}
+    </Tag>
+  );
+};
+
+const PositionTitle = ({ children, as: Tag }: { children: string; as: 'h3' | 'h4' }) => (
+  <Tag className={twJoin('-mt-0.5 text-base font-bold text-zinc-800 italic dark:text-zinc-200')}>
+    {children}
+  </Tag>
+);
+
+const CompanyLogo = ({ name, logo }: { name: string; logo?: StaticImageData }) => {
+  const className = twJoin(
     'relative z-10 flex size-10 shrink-0 items-center justify-center rounded-md',
     'ring-2 ring-zinc-200 dark:ring-zinc-600',
   );
-  const inner = logo ? (
-    <Image src={logo} alt={name} className={twJoin(sharedClassName, 'object-contain')} />
+
+  return logo ? (
+    <Image src={logo} alt={name} className={twJoin(className, 'object-contain')} />
   ) : (
-    <div className={twJoin(sharedClassName, 'bg-zinc-200 dark:bg-zinc-600')} aria-hidden>
+    <div className={twJoin(className, 'bg-zinc-200 dark:bg-zinc-600')} aria-hidden>
       <BriefcaseBusiness className="size-5 text-zinc-600 dark:text-zinc-300" />
     </div>
-  );
-
-  return linkedin ? (
-    <a
-      href={linkedin}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={name}
-      className={twJoin(
-        'relative z-10 shrink-0 rounded-md outline-teal-500 transition',
-        'hover:ring-2 hover:ring-teal-500/50 dark:hover:ring-teal-400/50',
-      )}
-    >
-      {inner}
-    </a>
-  ) : (
-    inner
   );
 };
 
@@ -122,13 +143,13 @@ const CareerStep = ({
 
       {/* Company row: logo node + header. */}
       <div className="flex items-start gap-4">
-        <CompanyLogo name={company} logo={logo} linkedin={linkedin} />
+        <CompanyLogo name={company} logo={logo} />
         <div className="min-w-0 flex-1">
           {hasMultiplePositions ? (
             <div className="mt-1.5 flex flex-wrap items-center">
-              <h3 className="text-base font-semibold text-zinc-800 dark:text-zinc-200">
+              <CompanyName as="h3" href={linkedin}>
                 {company}
-              </h3>
+              </CompanyName>
               <span className="ml-2 text-xs text-zinc-500 dark:text-zinc-400">({location})</span>
               <span className="ml-1 text-xs leading-tight font-semibold text-zinc-500 dark:text-zinc-400">
                 · {formatTotalDuration(start, positions.at(0)!.end)}
@@ -137,11 +158,11 @@ const CareerStep = ({
           ) : (
             <div className="-mt-4.5">
               <DateRange start={start} end={positions.at(0)!.end} />
-              <h3 className="-mt-0.5 text-base font-bold text-zinc-800 italic dark:text-zinc-200">
-                {positions.at(0)!.title}
-              </h3>
+              <PositionTitle as="h3">{positions.at(0)!.title}</PositionTitle>
               <p className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">
-                <span className="font-semibold text-zinc-700 dark:text-zinc-300">{company}</span>
+                <CompanyName as="span" href={linkedin}>
+                  {company}
+                </CompanyName>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400"> ({location})</span>
               </p>
             </div>
@@ -169,9 +190,7 @@ const CareerStep = ({
               </div>
               <div className="min-w-0 flex-1">
                 <DateRange start={start} end={end} />
-                <h4 className="-mt-0.5 font-bold text-zinc-800 italic dark:text-zinc-200">
-                  {title}
-                </h4>
+                <PositionTitle as="h4">{title}</PositionTitle>
               </div>
             </li>
           ))}
@@ -205,11 +224,14 @@ const CareerStep = ({
               />
             </DisclosureButton>
           </div>
+          {/* `static` keeps the panel in the DOM even when collapsed so crawlers
+              and AI agents can read the details; the `data-open` attribute drives
+              the CSS show/hide (a function className can't cross the RSC boundary). */}
           <DisclosurePanel
-            transition
+            static
             className={twJoin(
-              'grid grid-rows-[1fr] opacity-100 transition-all duration-200 ease-out',
-              'data-[closed]:grid-rows-[0fr] data-[closed]:opacity-0',
+              'grid grid-rows-[0fr] opacity-0 transition-all duration-200 ease-out',
+              'data-[open]:grid-rows-[1fr] data-[open]:opacity-100',
             )}
           >
             <div className="mt-2 mb-4 ml-10 overflow-hidden">
