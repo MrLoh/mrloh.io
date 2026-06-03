@@ -9,7 +9,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title,
     description,
-    alternates: { canonical: `https://${DOMAIN}/blog/${slug}` },
+    alternates: {
+      canonical: `https://${DOMAIN}/blog/${slug}`,
+      types: { 'text/markdown': `https://${DOMAIN}/blog/${slug}.md` },
+    },
     openGraph: {
       title,
       description,

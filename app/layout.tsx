@@ -12,7 +12,12 @@ import Providers from './Providers';
 export const metadata: Metadata = {
   title: 'MrLoh.io',
   description: 'Tobias Lohse - Software Engineer',
-  alternates: { types: { 'application/rss+xml': 'https://mrloh.io/blog/feed.xml' } },
+  alternates: {
+    types: {
+      'application/rss+xml': 'https://mrloh.io/blog/feed.xml',
+      'text/plain': 'https://mrloh.io/llms.txt',
+    },
+  },
 };
 
 export const viewport: Viewport = {

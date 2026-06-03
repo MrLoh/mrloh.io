@@ -6,8 +6,13 @@ import { Education } from '@/components/Education';
 import { Endorsements } from '@/components/Endorsements';
 import { Experiences } from '@/components/Experiences';
 import { Markdown } from '@/components/Markdown';
+import { DOMAIN } from '@/config';
 
 import { getContent } from './repo';
+
+export const metadata = {
+  alternates: { types: { 'text/markdown': `https://${DOMAIN}/resume.md` } },
+};
 
 export default async function AboutPage() {
   const { intro, personal, experiences, endorsements, education, openSource } = await getContent();
