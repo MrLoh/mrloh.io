@@ -2,6 +2,7 @@
 title: 'Patterns from Building Agentic Features'
 date: '2026-06-02'
 description: 'Four practical design patterns from building agentic features at Orca: embedded copilots, tool feedback loops, controller loops, and coding agents.'
+blueskyId: '3mnfo3n5dbc2i'
 ---
 
 import { Figure } from '@/components/Figure';
@@ -87,7 +88,7 @@ We also found that it is crucial to be deliberate about managing the context tha
 
 You probably noticed that the execute function of our `explainPrediction` tool also returns an instruction argument. This is sent to the LLM together with the data the tool call returned. We found that models followed instructions that were returned as the result much better than trying to cram them into the tool description and this also allows customizing the follow up instruction based on the tool call result. Another example for follow up instructions we use is the prediction tool guiding the model to navigate to the detail page and the navigation tool telling the model to read the new page only if it is relevant. Tools are not just reporting results, they are carrying workflow context into the next turn. Failures work the same way. An input error for example comes back with a short message to be displayed in the chat UI and a follow up instruction for the model to fix the invalid fields and try again, so even a failed call can keep the loop moving.
 
-This pattern extends beyond our copilot. Our backend also has several agentic features, that are colocated in the bounded context they belong to. The prediction explanation logic for example is not defined in the copilot but lives in our Python backend service next to the domain logic of our models and is built with [Pydantic AI](https://pydantic.dev/docs/ai). Explain is just a single shot agent with a highly optimized prompt that carries all the necessary context to explain a prediction and understand how our memory augmented classifiers work, but we also have some more complex agents that make use of follow up instruction in their tool call loops.
+This pattern extends beyond our copilot. Our backend also has several agentic features, that are colocated in the bounded context they belong to. The prediction explanation logic for example is not defined in the copilot but lives in our Python backend service next to the domain logic of our models and is built with [Pydantic AI](https://pydantic.dev/docs/ai). Explain is just a single shot agent with a highly optimized prompt that carries all the necessary context to explain a prediction and understand how our memory augmented classifiers work, but we also have some more complex agents that build a feedback harness out of the follow up instructions in their tool call loops.
 
 When an Orca model misclassifies an input, one way to steer it is to add memories with the expected label near that input, so the next lookup retrieves them as neighbors. We have an agent that generates those synthetic memories. The catch is that a useful one has to land close to the target input in embedding space, a cosine-distance question the generating model has no way to eyeball. So the agent writes a batch of candidates and submits them through a tool. That submission is itself a tool call, the same way a typed output or typed tool arguments are: the schema goes to the model, and what it sends back gets validated before your code runs. The only thing special here is what we validate, not whether a field is a string, but whether the string lands close enough.
 
@@ -168,7 +169,7 @@ Letting an agent run arbitrary code in your deployment is where this gets danger
 
 The sandbox decides whether the code is safe to run. It says nothing about whether the output is any good, and that is where the acceptance gate comes back, the same one as the synthetic memory loop. `submit_dataset` doesn’t just save what it is handed. It validates the shape the downstream steps need, a train and test split, a string value column, a `ClassLabel` label column, a `token_count` column, and label descriptions that match the labels, and raises a `ValueError` with a specific message when something is off. smolagents hands that error back as the next instruction and the model rewrites its code. `final_answer_checks` is the same trick at the exit, refusing to let the agent finish until a dataset has actually been submitted.
 
-The exploration in the middle is unconstrained, but every way out is narrow. And the contract those gates enforce is the same one we had been refining by hand for months before trying to automate any of it. The autonomous agent is just that skill, compressed into a prompt and a couple of checks.
+The exploration in the middle is unconstrained, but the harness around it is narrow: every way out runs through a gate. And the contract those gates enforce is the same one we had been refining by hand for months before trying to automate any of it. The autonomous agent is just that skill, compressed into a prompt and a couple of checks.
 
 ## Common Threads
 
