@@ -83,7 +83,7 @@ export function Education({
   className?: string;
 }) {
   return (
-    <section className={className}>
+    <section className={className} id="education">
       <div className="mb-2 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <h2 className="text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
           Education

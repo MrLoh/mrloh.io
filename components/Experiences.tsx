@@ -287,7 +287,7 @@ export function Experiences({
   action?: React.ReactNode;
 }) {
   return (
-    <section className={className}>
+    <section className={className} id="experience">
       <div className="mb-4 flex items-center justify-between gap-4">
         <h2 className="text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
           Experience

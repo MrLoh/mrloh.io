@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 
 import { getContent } from '@/app/about/repo';
-import { formatYearMonth } from '@/utils/formatting';
+import { formatDuration, formatYearMonth } from '@/utils/formatting';
 
 // A clean, single-source-of-truth Markdown resume rendered from about.yml, for
 // agents (and as a lossless companion to the binary /resume.pdf).
 export async function getResumeMarkdown(): Promise<string> {
-  const { location, intro, experiences, education, openSource, endorsements } = await getContent();
+  const { location, intro, experiences, education, skills, openSource, endorsements } =
+    await getContent();
   const lines: string[] = [
     `# Tobias Lohse`,
     '',
@@ -31,6 +32,12 @@ export async function getResumeMarkdown(): Promise<string> {
   lines.push('', '## Education', '', education.summary.trim(), '');
   for (const { name, url, description } of education.institutions) {
     lines.push(`- **[${name}](${url})** — ${description}`);
+  }
+
+  lines.push('', '## Skills', '', skills.intro.trim(), '');
+  for (const { name, duration, description, technologies } of skills.areas) {
+    lines.push('', `### ${name} · ${formatDuration(duration)}`, '', description.trim(), '');
+    lines.push(technologies.join(', '));
   }
 
   lines.push('', '## Open Source', '', openSource.trim());

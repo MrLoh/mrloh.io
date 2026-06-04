@@ -17,7 +17,6 @@ const experienceSchema = z.object({
   logo: z.string().optional(),
   linkedin: z.string().url().optional(),
   location: z.string(),
-  scopes: z.array(z.string()).min(1),
   positions: z
     .array(z.object({ title: z.string(), start: dateSchema, end: dateSchema.optional() }))
     .min(1),
@@ -38,10 +37,16 @@ const endorsementSchema = z.object({
 });
 export type Endorsement = z.infer<typeof endorsementSchema>;
 
-const skillSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  technologies: z.array(z.string()),
+const skillsSchema = z.object({
+  intro: z.string(),
+  areas: z.array(
+    z.object({
+      name: z.string(),
+      since: dateSchema,
+      description: z.string(),
+      technologies: z.array(z.string()),
+    }),
+  ),
 });
 
 const educationSchema = z.object({
@@ -71,24 +76,12 @@ export async function getContent() {
       intro: z.string(),
       personal: z.string(),
       experiences: z.array(experienceSchema),
-      skills: z.array(skillSchema),
+      skills: skillsSchema,
       education: educationSchema,
       openSource: z.string(),
       endorsements: z.array(endorsementSchema),
     })
     .parse(parseYaml(fs.readFileSync(file, 'utf8')));
-
-  const skillYears = Object.fromEntries(
-    skills.map(({ id }) => [
-      id,
-      experiences
-        .filter(({ scopes }) => scopes.includes(id))
-        .map(({ positions }) =>
-          positions.at(0)!.start.until(positions.at(-1)!.end ?? Temporal.Now.plainDateISO()),
-        )
-        .reduce((acc, range) => acc.add(range), Temporal.Duration.from({ months: 0 })),
-    ]),
-  );
 
   return {
     location,
@@ -100,7 +93,17 @@ export async function getContent() {
         logo: logo ? await importImage(logo) : undefined,
       })),
     ),
-    skills: skills.map((skill) => ({ ...skill, duration: skillYears[skill.id]! })),
+    skills: {
+      intro: skills.intro,
+      areas: skills.areas.map(({ since, ...skill }) => ({
+        ...skill,
+        duration: since.until(Temporal.Now.plainDateISO(), {
+          smallestUnit: 'years',
+          largestUnit: 'years',
+          roundingMode: 'halfExpand',
+        }),
+      })),
+    },
     education: {
       summary: education.summary,
       institutions: await Promise.all(

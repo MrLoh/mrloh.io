@@ -1,4 +1,4 @@
-import { Download, Send } from 'lucide-react';
+import { Calendar, Download, Send } from 'lucide-react';
 import { twJoin } from 'tailwind-merge';
 
 import { Button } from '@/components/Button';
@@ -6,6 +6,7 @@ import { Education } from '@/components/Education';
 import { Endorsements } from '@/components/Endorsements';
 import { Experiences } from '@/components/Experiences';
 import { Markdown } from '@/components/Markdown';
+import { Skills } from '@/components/Skills';
 import { DOMAIN } from '@/config';
 
 import { getContent } from './repo';
@@ -15,7 +16,8 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const { intro, personal, experiences, endorsements, education, openSource } = await getContent();
+  const { intro, personal, experiences, endorsements, education, skills, openSource } =
+    await getContent();
   return (
     <div className="relative mt-6 flex w-full max-w-none flex-col">
       <h1
@@ -41,27 +43,28 @@ export default async function AboutPage() {
         }
       />
       <Education {...education} className="prose-max prose-px mt-14" />
-
       <Endorsements endorsements={endorsements} className="mt-14 w-full" />
-      {/* <Skills skills={skills} className="prose-max prose-px mt-14" /> */}
-
-      <section className="prose-max prose-px mt-14">
-        <h2 className="mb-3 text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
+      <Skills {...skills} className="prose-max prose-px mt-8" />
+      <section className="prose-max prose-px mt-8" id="open-source">
+        <h2 className="mb-2 text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
           Open Source
         </h2>
         <Markdown source={openSource} />
       </section>
-
-      <section className="prose-max prose-px mt-8">
-        <h2 className="mb-3 text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
+      <section className="prose-max prose-px mt-8" id="personal">
+        <h2 className="mb-2 text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">
           Outside Work
         </h2>
         <Markdown source={personal} />
       </section>
-      <div className="prose-wrap mt-4 flex justify-end">
+      <div className="prose-wrap mt-8 flex justify-center gap-4">
         <Button href="mailto:hi@mrloh.io" className="grow-0 basis-auto gap-1.5 px-3 py-1 text-xs">
           get in touch
           <Send className="size-3.5" />
+        </Button>
+        <Button href="/openings" className="grow-0 basis-auto gap-1.5 px-3 py-1 text-xs">
+          schedule a call
+          <Calendar className="size-3.5" />
         </Button>
       </div>
     </div>

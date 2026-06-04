@@ -23,6 +23,7 @@ Next.js 16 App Router, React 19, Tailwind v4 (beta), MDX, shiki, `next-themes`, 
 - Keep `AGENTS.md` for repo-wide conventions only. Do not add component-local implementation notes (pin logic, one-off regressions, etc.) — put those in comments next to the code.
 - Do not extract trivial one-liners into helpers — inline the logic at the call site.
 - Keep small, single-file subcomponents colocated in the same module. Do not add a new file for helpers or typography used only by one parent component.
+- `app/*/repo.ts` — server-only load/validate for that section’s content (`about.yml`, blog frontmatter). Return typed data; format in components or routes, not in the repo.
 
 ## Layout shell
 

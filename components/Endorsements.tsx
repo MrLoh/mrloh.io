@@ -451,7 +451,7 @@ export function Endorsements({
   const showControls = endorsements.length > 1;
 
   return (
-    <section aria-labelledby="endorsements-heading" className={className}>
+    <section aria-labelledby="endorsements-heading" className={className} id="endorsements">
       <div
         className={twJoin(
           'prose-wrap mb-3',

@@ -14,7 +14,6 @@ experiences:
     logo: orca.jpeg
     linkedin: https://www.linkedin.com/company/orca-db
     location: Remote
-    scopes: [ml, ai, backend, web, devops, management]
     positions:
       - title: Head of Engineering
         start: '2025-09-22'
@@ -50,14 +49,15 @@ experiences:
       - React
       - Next.js
       - Playwright
-      - Pydantic AI
       - Vercel AI
+      - FastAPI
+      - Pydantic AI
+      - scikit-learn
 
   - company: Indigo Ag
     logo: indigoag.jpeg
     linkedin: https://www.linkedin.com/company/indigoag/
     location: Remote
-    scopes: [backend, web, management]
     positions:
       - title: Senior Engineering Manager
         start: '2022-06-06'
@@ -86,7 +86,6 @@ experiences:
     logo: tandem.jpeg
     linkedin: https://www.linkedin.com/company/tandemdiabetes
     location: Remote
-    scopes: [backend, web, app, management]
     positions:
       - title: Associate Director
         start: '2021-02-01'
@@ -123,7 +122,6 @@ experiences:
     logo: cinuru.jpeg
     linkedin: https://www.linkedin.com/company/cinuru
     location: Potsdam, Germany & Remote
-    scopes: [ml, backend, web, app, management]
     positions:
       - title: Co-founder & CTO
         start: '2016-10-19'
@@ -157,7 +155,6 @@ experiences:
     logo: aaron.jpeg
     linkedin: https://www.linkedin.com/company/aaron-ai
     location: Berlin, Germany
-    scopes: [ml]
     positions:
       - title: Machine Learning Engineer
         start: '2016-01-04'
@@ -171,7 +168,6 @@ experiences:
 
   - company: Freelance
     location: Berlin, Germany
-    scopes: [web]
     positions:
       - title: Web Developer & Designer
         start: '2012-11-01'
@@ -180,57 +176,78 @@ experiences:
       I started my journey into software development by building websites and mobile apps for various clients.
 
 skills:
-  - id: ml
-    name: Machine Learning & AI
-    technologies:
-      - Transformers
-      - PyTorch
-      - Scikit Learn
-      - Numpy
-      - Pydantic AI
-      - Vercel AI
-      - Milvus
-      - RAG
-      - Agent Eval
-      - Finetuning
-      - CUDA
+  intro: >
+    As an ex-founder and someone who loves to learn, I find that I provide the most value when I'm able to work on systems holistically and be hands-on across the stack driven by the business's current top priorities.
+  areas:
+    - name: Applied AI & ML
+      since: '2021-06-01' # pseudo: 9mo Aaron + 18mo Cinuru ML + Orca→today
+      description: >
+        I’m drawn to AI where it actually meets the product rather than sitting beside it. Building something useful and steerable means understanding the data, embeddings, model behavior, and product context well enough to make good systems decisions. I like pulling ideas from research when they help solve real product problems, but most of the leverage still lives in the data: labeling, feedback loops, evaluation, and steerability. My work at Orca also made me especially interested in memory: how systems should remember, compress, retrieve, and apply context over time, and how much product potential still sits between today’s LLM context windows and the way people actually work.
+      technologies:
+        - PyTorch
+        - Transformers
+        - scikit-learn
+        - Evaluation
+        - Pydantic AI
+        - Vercel AI SDK
+        - Milvus
+        - RAG
+        - Fine-Tuning
+        - Data-Centric ML
 
-  - id: backend
-    name: Backend & DevOps
-    technologies:
-      - Node.js
-      - Python
-      - REST
-      - GraphQL
-      - RPC
-      - WebSockets
-      - PostgreSQL
-      - SQLite
-      - Redis
-      - OpenTelemetry
-      - Docker
-      - Kubernetes
-      - Terraform
-      - Domain Driven Design
-      - Event Sourcing
-      - GitHub Actions
-      - Google Cloud Platform
-      - Serverless
+    - name: Backend & Infra
+      since: '2016-10-19' # since Cinuru
+      description: >
+        I like backend systems that are simple enough to understand, observable enough to learn from, and well-modeled enough to evolve. Monolith versus microservices is mostly the wrong argument. What matters is whether you have clear domain boundaries and whether telemetry shows that the product, team, or scale now needs a more specialized architecture. Domain-Driven Design shapes how I approach that: model the business domain first, keep it separate from infrastructure, and use adapters or repositories where they make the system easier to change underneath. Kubernetes, serverless, and managed cloud services all have their place, but I prefer starting with simpler open source primitives and letting the system earn complexity.
+      technologies:
+        - Python
+        - Node.js
+        - PostgreSQL
+        - Redis
+        - OpenTelemetry
+        - Docker
+        - Kubernetes
+        - IaC
+        - GitHub Actions
+        - GCP
+        - AWS
+        - DDD
+        - Event Sourcing
 
-  - id: web
-    name: Web App Development
-    technologies:
-      - TypeScript
-      - React Native
-      - React
-      - Next.js
-      - Tailwind
-      - HTML Emails
-      - Playwright
-      - i18n
-      - a11y
-      - Auth & SSO
-      - Design Systems
+    - name: Apps & Design
+      since: '2012-11-01' # since Freelance
+      description: >
+        I came to software partly through design, and I still care a lot about the feel of what I build. Good apps should feel native to their platform, not just technically correct, which means using the product and sweating the gestures, interaction states, and details automated tests never catch. I’d rather build product-specific UI on headless primitives than inherit the look of a heavy component library, and I’ve been building design systems, including hybrid ones across web and mobile, for years. I like React’s co-location model because it matches how I think about product architecture: features should own their data, behavior, and UI instead of being sliced into rigid layers.
+      technologies:
+        - TypeScript
+        - React
+        - Next.js
+        - React Native
+        - Tailwind CSS
+        - Design Systems
+        - Headless UI
+        - Playwright
+        - Auth & SSO
+        - i18n
+        - a11y
+
+    - name: Leadership
+      since: '2008-05-04' # since VB Board
+      description: >
+        I like leading close to the work. At Tandem, I hired and managed larger teams and coordinated work across a broader matrixed organization. At Orca, starting as an IC before moving into Head of Engineering made my leadership much more grounded, because it is hard to lead well on a system you do not understand. I care about distributed authority: clear roles, explicit ownership, and enough trust that capable people can make decisions without routing everything through one person. I still believe in Agile as originally written: adapt through real feedback, keep people close to the work, and never let process harden into ritual. I’d rather build smaller, sharper teams than add structure around avoidable complexity.
+      technologies:
+        - Agile
+        - Lean
+        - Distributed Authority
+        - Role Clarity
+        - Async Comms
+        - RFCs
+        - Retros
+        - OKRs
+        - Process Design
+        - Hiring
+        - Mentoring
+        - Notion
 
 education:
   summary: >
