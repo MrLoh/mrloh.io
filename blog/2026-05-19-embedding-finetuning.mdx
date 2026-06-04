@@ -5,7 +5,7 @@ description: 'How chasing a broken batch sampler turned into rewriting our embed
 blueskyId: '3mmerbfiggk2l'
 ---
 
-At the startup where I work, the core product is a platform for retrieval-augmented classification. Customers provide labeled data, which is embedded and stored to guide a classifier. The biggest lever for adapting those classifiers to a customer’s domain is usually finetuning the embedding model.
+At the startup where I work, the core product is a platform for retrieval-augmented classification. Customers provide labeled data, which is embedded and stored to guide a classifier. The biggest lever for adapting those classifiers to a customer’s domain is usually finetuning the [embedding model](https://docs.orcadb.ai/guides/embedding-models/).
 
 I was recently working on a customer project doing intent classification over long support conversations. It ended up driving a complete rewrite of the finetuning system, and I wanted to share a few interesting lessons I learned along the way.
 
@@ -49,7 +49,7 @@ But getting there took a lot of trial and error across losses, batch sizes, lear
 
 ## Compiling Semantic Training Intents into Hardware-Grounded Execution Plans
 
-Two things needed to be automated: which hardware shape an individual run uses, and the search across runs to find good hyperparameters. The platform runs on a lot of different GPU configurations — hosted cloud, self-hosted, Docker, or binaries for local experiments. So the per-device batch size that actually fits depends on the model, the sequence length, the dtype, and whether gradient checkpointing is on. We needed to abstract all of that away from the domain model we expose to customers, so they could just express their intent like this:
+Two things needed to be automated: which hardware shape an individual run uses, and the search across runs to find good hyperparameters. The platform runs on a lot of different GPU configurations — hosted cloud, self-hosted, Docker, or binaries for local experiments. So the per-device batch size that actually fits depends on the model, the sequence length, the dtype, and whether gradient checkpointing is on. We needed to abstract all of that away from the domain model we expose to customers, so they could express their intent through [Orca’s finetuning API](https://docs.orcadb.ai/guides/finetuning/) like this:
 
 ```py
 model.finetune(

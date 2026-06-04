@@ -39,33 +39,19 @@ experiences:
     skills:
       - Python
       - TypeScript
-      - React
-      - Transformers
       - PyTorch
       - Milvus
-      - Pydantic AI
-      - Next.js
-      - Tailwind
+      - RAG
       - PostgreSQL
-      - SQLite
       - Redis
-      - Docker
       - Kubernetes
       - OpenTelemetry
-      - FastAPI
-      - Vercel AI
-      - GitHub Actions
       - GCP
-      - SOC2
-      - SSO & SCIM
-      - DDD
-      - Event Sourcing
+      - React
+      - Next.js
       - Playwright
-      - Scikit-Learn
-      - Numpy
-      - RAG
-      - REST APIs
-      - CUDA
+      - Pydantic AI
+      - Vercel AI
 
   - company: Indigo Ag
     logo: indigoag.jpeg
@@ -87,12 +73,12 @@ experiences:
       - Python
       - TypeScript
       - React
+      - Next.js
       - PostgreSQL
       - Docker
       - AWS
       - Terraform
       - DDD
-      - Next.js
       - a11y
       - Cypress
 
