@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { twJoin } from 'tailwind-merge';
 
+import { EMAIL } from '@/config';
+
 import { Bluesky, Email, Github, LinkedIn, Rss } from './SocialIcons';
 
 export function Footer({ links }: { links: { href: string; name: string }[] }) {
@@ -44,7 +46,7 @@ export function Footer({ links }: { links: { href: string; name: string }[] }) {
               { Icon: Github, href: 'https://github.com/mrloh' },
               { Icon: LinkedIn, href: 'http://linkedin.com/in/tobiaslohse' },
               { Icon: Rss, href: '/blog/feed.xml' },
-              { Icon: Email, href: 'mailto:hi@mrloh.io' },
+              { Icon: Email, href: `mailto:${EMAIL}` },
             ].map(({ Icon, href }) => (
               <a
                 href={href}

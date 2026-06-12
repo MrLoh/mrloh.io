@@ -7,7 +7,7 @@ import { Endorsements } from '@/components/Endorsements';
 import { Experiences } from '@/components/Experiences';
 import { Markdown } from '@/components/Markdown';
 import { Skills } from '@/components/Skills';
-import { DOMAIN } from '@/config';
+import { DOMAIN, EMAIL } from '@/config';
 
 import { getContent } from './repo';
 
@@ -58,7 +58,7 @@ export default async function AboutPage() {
         <Markdown source={personal} />
       </section>
       <div className="prose-wrap mt-8 flex justify-center gap-4">
-        <Button href="mailto:hi@mrloh.io" className="grow-0 basis-auto gap-1.5 px-3 py-1 text-xs">
+        <Button href={`mailto:${EMAIL}`} className="grow-0 basis-auto gap-1.5 px-3 py-1 text-xs">
           get in touch
           <Send className="size-3.5" />
         </Button>
