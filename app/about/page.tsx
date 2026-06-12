@@ -15,7 +15,10 @@ export const metadata = {
   alternates: { types: { 'text/markdown': `https://${DOMAIN}/resume.md` } },
 };
 
-export default async function AboutPage() {
+type AboutPageProps = { searchParams: Promise<{ endorsement?: string }> };
+
+export default async function AboutPage({ searchParams }: AboutPageProps) {
+  const { endorsement: endorsementSlug } = await searchParams;
   const { intro, personal, experiences, endorsements, education, skills, openSource } =
     await getContent();
   return (
@@ -43,7 +46,11 @@ export default async function AboutPage() {
         }
       />
       <Education {...education} className="prose-max prose-px mt-14" />
-      <Endorsements endorsements={endorsements} className="mt-14 w-full" />
+      <Endorsements
+        endorsements={endorsements}
+        initialSlug={endorsementSlug}
+        className="mt-14 w-full"
+      />
       <Skills {...skills} className="prose-max prose-px mt-8" />
       <section className="prose-max prose-px mt-8" id="open-source">
         <h2 className="mb-2 text-base font-extrabold text-zinc-800 uppercase dark:text-zinc-200">

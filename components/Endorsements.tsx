@@ -3,6 +3,7 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { ChevronLeft, ChevronRight, MoveRight, X } from 'lucide-react';
 import Image, { type StaticImageData } from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
@@ -10,6 +11,8 @@ import { LinkedIn } from '@/components/SocialIcons';
 
 const GAP_PX = 32;
 const SCROLL_END_DEBOUNCE_MS = 140;
+const LINKEDIN_RECOMMENDATIONS_URL =
+  'https://www.linkedin.com/in/tobiaslohse/details/recommendations/';
 
 function slidesPerView(width: number) {
   if (width >= 1280) return 3;
@@ -70,6 +73,10 @@ export type Endorsement = {
   linkedin: string;
   text: string;
 };
+
+function endorsementSlug(linkedin: string) {
+  return new URL(linkedin).pathname.split('/').filter(Boolean).pop() ?? '';
+}
 
 function EndorsementCard({
   name,
@@ -171,27 +178,52 @@ function EndorsementModal({
               <X className="size-5" aria-hidden />
             </button>
 
-            <div className="flex items-center gap-3 pr-8">
+            <a
+              href={endorsement.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className={twJoin('group flex items-center gap-3 pr-8 outline-teal-500 transition')}
+            >
               <Image
                 src={endorsement.image}
                 alt={endorsement.name}
                 className={twJoin(
                   'size-12 shrink-0 rounded-full object-cover',
-                  'ring-2 ring-zinc-100 dark:ring-zinc-700',
+                  'ring-2 ring-zinc-100 transition dark:ring-zinc-700',
+                  'group-hover:ring-teal-600/40 group-focus:ring-teal-500',
                 )}
               />
               <div className="min-w-0 flex-1">
-                <DialogTitle className="truncate text-sm font-bold text-zinc-800 italic dark:text-zinc-200">
+                <DialogTitle
+                  as="span"
+                  className={twJoin(
+                    'block truncate text-sm font-bold text-zinc-800 italic transition',
+                    'group-hover:text-teal-500 group-focus:text-teal-500',
+                    'dark:text-zinc-200 dark:group-hover:text-teal-400 dark:group-focus:text-teal-400',
+                  )}
+                >
                   {endorsement.name}
                 </DialogTitle>
-                <p className="truncate pl-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+                <p
+                  className={twJoin(
+                    'truncate pl-0.5 text-xs text-zinc-500 transition',
+                    'group-hover:text-teal-600 group-focus:text-teal-500',
+                    'dark:text-zinc-400 dark:group-hover:text-teal-400 dark:group-focus:text-teal-400',
+                  )}
+                >
                   {endorsement.title}
                 </p>
-                <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <p
+                  className={twJoin(
+                    'truncate text-xs text-zinc-500 transition',
+                    'group-hover:text-teal-600 group-focus:text-teal-500',
+                    'dark:text-zinc-400 dark:group-hover:text-teal-400 dark:group-focus:text-teal-400',
+                  )}
+                >
                   {endorsement.relationship}
                 </p>
               </div>
-            </div>
+            </a>
 
             <div
               className={twJoin(
@@ -201,6 +233,24 @@ function EndorsementModal({
               {paragraphs.map((paragraph, i) => (
                 <p key={i}>{paragraph}</p>
               ))}
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              <a
+                href={LINKEDIN_RECOMMENDATIONS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className={twJoin(
+                  'group inline-flex items-center text-xs text-zinc-400 italic no-underline',
+                  'rounded-md px-1.5 py-0.5 outline-teal-500 transition',
+                  'hover:text-teal-500 focus:text-teal-500 dark:text-zinc-600 dark:hover:text-teal-400',
+                  'hover:bg-teal-50 focus:bg-teal-50 dark:hover:bg-teal-900/30 dark:focus:bg-teal-900/30',
+                  'border border-transparent hover:border-teal-500/10 focus:border-teal-500/30',
+                )}
+              >
+                View on LinkedIn
+                <LinkedIn className="mt-px ml-1.5 size-3.5 text-zinc-300 transition group-hover:text-teal-500 group-focus:text-teal-500 dark:text-zinc-700" />
+              </a>
             </div>
           </DialogPanel>
         </div>
@@ -237,18 +287,37 @@ function CarouselButton({
 
 export function Endorsements({
   endorsements,
+  initialSlug,
   className,
 }: {
   endorsements: Endorsement[];
+  initialSlug?: string;
   className?: string;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
   const scrollRef = useRef<HTMLDivElement>(null);
   const navigatingRef = useRef(false);
   const pendingScrollLeftRef = useRef<number | null>(null);
   const indexRef = useRef(0);
   const [index, setIndex] = useState(0);
   const [layout, setLayout] = useState({ slideWidth: 0, edgePad: 0, perView: 1 });
-  const [openItem, setOpenItem] = useState<Endorsement | null>(null);
+
+  const openItem = initialSlug
+    ? (endorsements.find((item) => endorsementSlug(item.linkedin) === initialSlug) ?? null)
+    : null;
+
+  const openEndorsement = useCallback(
+    (item: Endorsement) => {
+      const slug = endorsementSlug(item.linkedin);
+      router.replace(`${pathname}?endorsement=${encodeURIComponent(slug)}`, { scroll: false });
+    },
+    [pathname, router],
+  );
+
+  const closeEndorsement = useCallback(() => {
+    router.replace(pathname, { scroll: false });
+  }, [pathname, router]);
 
   const loop = endorsements.length > 1;
   const loopedItems: (Endorsement & { key: string; copy: number; logicalIndex: number })[] = loop
@@ -374,6 +443,14 @@ export function Endorsements({
   }, [endorsements.length, layout.slideWidth, layout.edgePad, loop, targetScrollLeft]);
 
   useEffect(() => {
+    if (!initialSlug || layout.slideWidth === 0) return;
+    const logicalIndex = endorsements.findIndex(
+      (item) => endorsementSlug(item.linkedin) === initialSlug,
+    );
+    if (logicalIndex >= 0) scrollTo(logicalIndex);
+  }, [initialSlug, endorsements, layout.slideWidth, scrollTo]);
+
+  useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
 
@@ -465,7 +542,7 @@ export function Endorsements({
           Endorsements
         </h2>
         <a
-          href={'https://www.linkedin.com/in/tobiaslohse/details/recommendations/'}
+          href={LINKEDIN_RECOMMENDATIONS_URL}
           target="_blank"
           rel="noreferrer"
           className={twJoin(
@@ -505,7 +582,7 @@ export function Endorsements({
               style={{ width: layout.slideWidth > 0 ? layout.slideWidth : '100%' }}
             >
               <div className="coverflow-card h-full w-full">
-                <EndorsementCard {...item} onReadMore={() => setOpenItem(item)} />
+                <EndorsementCard {...item} onReadMore={() => openEndorsement(item)} />
               </div>
             </div>
           ))}
@@ -541,7 +618,7 @@ export function Endorsements({
           </CarouselButton>
         </div>
       )}
-      {openItem && <EndorsementModal endorsement={openItem} onClose={() => setOpenItem(null)} />}
+      {openItem && <EndorsementModal endorsement={openItem} onClose={closeEndorsement} />}
     </section>
   );
 }
